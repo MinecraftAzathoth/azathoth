@@ -1,0 +1,62 @@
+# Agones Fleet configuration for Azathoth Game Instances
+apiVersion: agones.dev/v1
+kind: Fleet
+metadata:
+  name: azathoth-game-instances
+  namespace: azathoth
+spec:
+  replicas: 5
+  scheduling: Packed
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+  template:
+    metadata:
+      labels:
+        app: azathoth-game-instance
+    spec:
+      ports:
+        - name: game
+          portPolicy: Dynamic
+          containerPort: 25565
+          protocol: TCP
+      health:
+        initialDelaySeconds: 30
+        periodSeconds: 10
+        failureThreshold: 3
+      sdkServer:
+        logLevel: Info
+        grpcPort: 9357
+        httpPort: 9358
+      template:
+        spec:
+          containers:
+            - name: game-instance
+              image: azathoth/game-instance:latest
+              imagePullPolicy: Always
+              resources:
+                requests:
+                  memory: "4Gi"
+                  cpu: "1000m"
+                limits:
+                  memory: "8Gi"
+                  cpu: "4000m"
+              env:
+                - name: POD_NAME
+                  valueFrom:
+                    fieldRef:
+                      fieldPath: metadata.name
+                - name: POD_NAMESPACE
+                  valueFrom:
+                    fieldRef:
+                      fieldPath: metadata.namespace
+              volumeMounts:
+                - name: config
+                  mountPath: /app/config
+                  readOnly: true
+          volumes:
+            - name: config
+              configMap:
+                name: azathoth-game-config

@@ -1,0 +1,188 @@
+syntax = "proto3";
+
+package com.azathoth.grpc.trade;
+
+option java_multiple_files = true;
+option java_package = "com.azathoth.core.grpc.trade";
+
+// 交易市场服务定义
+service TradeService {
+  // 上架商品
+  rpc CreateListing(CreateListingRequest) returns (CreateListingResponse);
+  
+  // 下架商品
+  rpc CancelListing(CancelListingRequest) returns (CancelListingResponse);
+  
+  // 购买商品
+  rpc Purchase(PurchaseRequest) returns (PurchaseResponse);
+  
+  // 搜索商品
+  rpc SearchListings(SearchListingsRequest) returns (SearchListingsResponse);
+  
+  // 获取商品详情
+  rpc GetListing(GetListingRequest) returns (GetListingResponse);
+  
+  // 获取玩家上架列表
+  rpc GetPlayerListings(GetPlayerListingsRequest) returns (GetPlayerListingsResponse);
+  
+  // 获取交易历史
+  rpc GetTransactionHistory(GetTransactionHistoryRequest) returns (GetTransactionHistoryResponse);
+  
+  // 获取价格历史
+  rpc GetPriceHistory(GetPriceHistoryRequest) returns (GetPriceHistoryResponse);
+}
+
+message CreateListingRequest {
+  string seller_id = 1;
+  string item_id = 2;
+  int32 amount = 3;
+  int64 unit_price = 4;
+  CurrencyType currency_type = 5;
+  bytes item_data = 6;  // 序列化的物品数据
+}
+
+message CreateListingResponse {
+  bool success = 1;
+  string listing_id = 2;
+  string error_message = 3;
+}
+
+message CancelListingRequest {
+  string listing_id = 1;
+  string operator_id = 2;
+}
+
+message CancelListingResponse {
+  bool success = 1;
+  string error_message = 2;
+}
+
+message PurchaseRequest {
+  string listing_id = 1;
+  string buyer_id = 2;
+  int32 amount = 3;  // 0 表示全部
+}
+
+message PurchaseResponse {
+  bool success = 1;
+  int32 purchased_amount = 2;
+  int64 total_cost = 3;
+  string error_message = 4;
+}
+
+message SearchListingsRequest {
+  string item_id = 1;
+  string item_type = 2;
+  int64 min_price = 3;
+  int64 max_price = 4;
+  CurrencyType currency_type = 5;
+  SortBy sort_by = 6;
+  SortOrder sort_order = 7;
+  int32 page = 8;
+  int32 page_size = 9;
+}
+
+message SearchListingsResponse {
+  repeated ListingData listings = 1;
+  int64 total_count = 2;
+  int32 current_page = 3;
+  int32 total_pages = 4;
+}
+
+message GetListingRequest {
+  string listing_id = 1;
+}
+
+message GetListingResponse {
+  bool success = 1;
+  ListingData listing = 2;
+  string error_message = 3;
+}
+
+message GetPlayerListingsRequest {
+  string player_id = 1;
+}
+
+message GetPlayerListingsResponse {
+  repeated ListingData listings = 1;
+}
+
+message ListingData {
+  string listing_id = 1;
+  string seller_id = 2;
+  string seller_name = 3;
+  string item_id = 4;
+  string item_name = 5;
+  int32 amount = 6;
+  int64 unit_price = 7;
+  int64 total_price = 8;
+  CurrencyType currency_type = 9;
+  int64 listed_at = 10;
+  int64 expires_at = 11;
+  bytes item_data = 12;
+}
+
+message GetTransactionHistoryRequest {
+  string player_id = 1;
+  TransactionRole role = 2;  // 买家/卖家/全部
+  int32 limit = 3;
+}
+
+message GetTransactionHistoryResponse {
+  repeated TransactionData transactions = 1;
+}
+
+message TransactionData {
+  string transaction_id = 1;
+  string listing_id = 2;
+  string seller_id = 3;
+  string buyer_id = 4;
+  string item_id = 5;
+  string item_name = 6;
+  int32 amount = 7;
+  int64 unit_price = 8;
+  int64 total_price = 9;
+  CurrencyType currency_type = 10;
+  int64 transacted_at = 11;
+}
+
+message GetPriceHistoryRequest {
+  string item_id = 1;
+  int32 days = 2;
+}
+
+message GetPriceHistoryResponse {
+  repeated PricePoint points = 1;
+}
+
+message PricePoint {
+  int64 timestamp = 1;
+  int64 average_price = 2;
+  int64 min_price = 3;
+  int64 max_price = 4;
+  int64 volume = 5;
+}
+
+enum CurrencyType {
+  GOLD = 0;
+  DIAMOND = 1;
+  GUILD_COIN = 2;
+  EVENT_COIN = 3;
+}
+
+enum SortBy {
+  PRICE = 0;
+  LISTED_TIME = 1;
+  AMOUNT = 2;
+}
+
+enum SortOrder {
+  ASC = 0;
+  DESC = 1;
+}
+
+enum TransactionRole {
+  ALL = 0;
+  BUYER = 1;
+  SELLER = 2;
+}

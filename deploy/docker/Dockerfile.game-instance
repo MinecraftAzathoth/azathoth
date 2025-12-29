@@ -1,0 +1,32 @@
+FROM eclipse-temurin:25-jre-alpine
+
+LABEL maintainer="Azathoth Team"
+LABEL description="Azathoth Game Instance Server"
+
+WORKDIR /app
+
+# Create non-root user
+RUN addgroup -g 1000 azathoth && \
+    adduser -u 1000 -G azathoth -D azathoth
+
+# Copy application
+COPY game-instance/build/libs/game-instance.jar app.jar
+
+# Create data directories
+RUN mkdir -p /app/worlds /app/plugins /app/config && \
+    chown -R azathoth:azathoth /app
+
+USER azathoth
+
+# Expose game port
+EXPOSE 25565
+
+# JVM options optimized for game server
+ENV JAVA_OPTS="-XX:+UseContainerSupport \
+    -XX:MaxRAMPercentage=75.0 \
+    -XX:+UseZGC \
+    -XX:+ZGenerational \
+    -XX:+AlwaysPreTouch \
+    -Djava.security.egd=file:/dev/./urandom"
+
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]

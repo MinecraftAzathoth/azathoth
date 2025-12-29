@@ -1,0 +1,225 @@
+syntax = "proto3";
+
+package com.azathoth.grpc.dungeon;
+
+option java_multiple_files = true;
+option java_package = "com.azathoth.core.grpc.dungeon";
+
+// 副本服务定义
+service DungeonService {
+  // 获取副本模板列表
+  rpc ListTemplates(ListTemplatesRequest) returns (ListTemplatesResponse);
+  
+  // 创建副本实例
+  rpc CreateInstance(CreateInstanceRequest) returns (CreateInstanceResponse);
+  
+  // 获取副本实例信息
+  rpc GetInstance(GetInstanceRequest) returns (InstanceResponse);
+  
+  // 加入副本
+  rpc JoinInstance(JoinInstanceRequest) returns (JoinInstanceResponse);
+  
+  // 离开副本
+  rpc LeaveInstance(LeaveInstanceRequest) returns (LeaveInstanceResponse);
+  
+  // 订阅副本状态更新
+  rpc SubscribeInstanceUpdates(SubscribeInstanceRequest) returns (stream InstanceUpdateEvent);
+  
+  // 获取玩家副本记录
+  rpc GetPlayerRecords(GetPlayerRecordsRequest) returns (GetPlayerRecordsResponse);
+  
+  // 获取副本排行榜
+  rpc GetLeaderboard(GetLeaderboardRequest) returns (GetLeaderboardResponse);
+}
+
+message ListTemplatesRequest {
+  int32 min_level = 1;
+  int32 max_level = 2;
+  DungeonDifficulty difficulty = 3;
+}
+
+message ListTemplatesResponse {
+  repeated DungeonTemplateData templates = 1;
+}
+
+message DungeonTemplateData {
+  string template_id = 1;
+  string name = 2;
+  string description = 3;
+  int32 min_players = 4;
+  int32 max_players = 5;
+  int32 recommended_level = 6;
+  int32 min_level = 7;
+  repeated DungeonDifficulty supported_difficulties = 8;
+  int32 time_limit_seconds = 9;
+  int32 daily_entry_limit = 10;
+}
+
+message CreateInstanceRequest {
+  string template_id = 1;
+  DungeonDifficulty difficulty = 2;
+  string leader_id = 3;
+  repeated string member_ids = 4;
+}
+
+message CreateInstanceResponse {
+  bool success = 1;
+  string instance_id = 2;
+  string error_message = 3;
+}
+
+message GetInstanceRequest {
+  string instance_id = 1;
+}
+
+message InstanceResponse {
+  bool success = 1;
+  DungeonInstanceData instance = 2;
+  string error_message = 3;
+}
+
+message DungeonInstanceData {
+  string instance_id = 1;
+  string template_id = 2;
+  string template_name = 3;
+  DungeonDifficulty difficulty = 4;
+  DungeonState state = 5;
+  repeated string player_ids = 6;
+  int32 current_players = 7;
+  int32 max_players = 8;
+  int64 created_at = 9;
+  int64 started_at = 10;
+  int32 elapsed_seconds = 11;
+  int32 remaining_seconds = 12;
+  DungeonProgress progress = 13;
+}
+
+message DungeonProgress {
+  int32 current_phase = 1;
+  int32 total_phases = 2;
+  int32 monsters_killed = 3;
+  int32 bosses_killed = 4;
+  int32 deaths = 5;
+  int32 score = 6;
+}
+
+message JoinInstanceRequest {
+  string instance_id = 1;
+  string player_id = 2;
+}
+
+message JoinInstanceResponse {
+  bool success = 1;
+  string error_message = 2;
+  string world_name = 3;
+  double spawn_x = 4;
+  double spawn_y = 5;
+  double spawn_z = 6;
+}
+
+message LeaveInstanceRequest {
+  string instance_id = 1;
+  string player_id = 2;
+}
+
+message LeaveInstanceResponse {
+  bool success = 1;
+  string error_message = 2;
+}
+
+message SubscribeInstanceRequest {
+  string instance_id = 1;
+}
+
+message InstanceUpdateEvent {
+  string instance_id = 1;
+  InstanceUpdateType update_type = 2;
+  DungeonState state = 3;
+  DungeonProgress progress = 4;
+  string message = 5;
+  int64 timestamp = 6;
+}
+
+message GetPlayerRecordsRequest {
+  string player_id = 1;
+  string template_id = 2;  // 为空表示所有副本
+  int32 limit = 3;
+}
+
+message GetPlayerRecordsResponse {
+  repeated DungeonRecordData records = 1;
+}
+
+message DungeonRecordData {
+  string record_id = 1;
+  string template_id = 2;
+  string template_name = 3;
+  DungeonDifficulty difficulty = 4;
+  bool cleared = 5;
+  int32 duration_seconds = 6;
+  int32 score = 7;
+  DungeonRating rating = 8;
+  int64 completed_at = 9;
+}
+
+message GetLeaderboardRequest {
+  string template_id = 1;
+  DungeonDifficulty difficulty = 2;
+  LeaderboardType type = 3;
+  int32 limit = 4;
+}
+
+message GetLeaderboardResponse {
+  repeated LeaderboardEntry entries = 1;
+}
+
+message LeaderboardEntry {
+  int32 rank = 1;
+  string player_id = 2;
+  string player_name = 3;
+  int32 score = 4;
+  int32 duration_seconds = 5;
+  DungeonRating rating = 6;
+  int64 achieved_at = 7;
+}
+
+enum DungeonDifficulty {
+  NORMAL = 0;
+  HARD = 1;
+  NIGHTMARE = 2;
+  HELL = 3;
+}
+
+enum DungeonState {
+  CREATING = 0;
+  WAITING = 1;
+  IN_PROGRESS = 2;
+  COMPLETED = 3;
+  FAILED = 4;
+  CLOSED = 5;
+}
+
+enum DungeonRating {
+  F = 0;
+  D = 1;
+  C = 2;
+  B = 3;
+  A = 4;
+  S = 5;
+}
+
+enum InstanceUpdateType {
+  STATE_CHANGED = 0;
+  PHASE_ADVANCED = 1;
+  PLAYER_JOINED = 2;
+  PLAYER_LEFT = 3;
+  BOSS_SPAWNED = 4;
+  BOSS_KILLED = 5;
+  OBJECTIVE_COMPLETED = 6;
+}
+
+enum LeaderboardType {
+  FASTEST_CLEAR = 0;
+  HIGHEST_SCORE = 1;
+  MOST_CLEARS = 2;
+}

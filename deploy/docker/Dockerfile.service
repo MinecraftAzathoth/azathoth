@@ -1,0 +1,32 @@
+FROM eclipse-temurin:25-jre-alpine
+
+ARG SERVICE_NAME
+LABEL maintainer="Azathoth Team"
+LABEL description="Azathoth Service - ${SERVICE_NAME}"
+
+WORKDIR /app
+
+# Create non-root user
+RUN addgroup -g 1000 azathoth && \
+    adduser -u 1000 -G azathoth -D azathoth
+
+# Copy application
+COPY services/${SERVICE_NAME}/build/libs/${SERVICE_NAME}.jar app.jar
+
+# Set ownership
+RUN chown -R azathoth:azathoth /app
+
+USER azathoth
+
+# Expose gRPC and HTTP ports
+EXPOSE 9090
+EXPOSE 8080
+
+# JVM options for container environment
+ENV JAVA_OPTS="-XX:+UseContainerSupport \
+    -XX:MaxRAMPercentage=75.0 \
+    -XX:+UseZGC \
+    -XX:+ZGenerational \
+    -Djava.security.egd=file:/dev/./urandom"
+
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]

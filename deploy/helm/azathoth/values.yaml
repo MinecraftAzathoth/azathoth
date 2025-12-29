@@ -1,0 +1,187 @@
+# Default values for Azathoth deployment
+
+# Global settings
+global:
+  imageRegistry: ""
+  imagePullSecrets: []
+  storageClass: ""
+
+# Gateway configuration
+gateway:
+  replicaCount: 2
+  image:
+    repository: azathoth/gateway
+    tag: latest
+    pullPolicy: IfNotPresent
+  resources:
+    limits:
+      cpu: 2000m
+      memory: 4Gi
+    requests:
+      cpu: 500m
+      memory: 1Gi
+  service:
+    type: LoadBalancer
+    port: 25565
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 70
+
+# Game Instance configuration (managed by Agones)
+gameInstance:
+  image:
+    repository: azathoth/game-instance
+    tag: latest
+    pullPolicy: IfNotPresent
+  resources:
+    limits:
+      cpu: 4000m
+      memory: 8Gi
+    requests:
+      cpu: 1000m
+      memory: 4Gi
+  # Agones Fleet configuration
+  fleet:
+    replicas: 5
+    scheduling: Packed
+    strategy:
+      type: RollingUpdate
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+    ports:
+      - name: game
+        portPolicy: Dynamic
+        containerPort: 25565
+        protocol: TCP
+
+# Services configuration
+services:
+  playerService:
+    replicaCount: 2
+    image:
+      repository: azathoth/player-service
+      tag: latest
+    resources:
+      limits:
+        cpu: 1000m
+        memory: 2Gi
+      requests:
+        cpu: 250m
+        memory: 512Mi
+
+  chatService:
+    replicaCount: 2
+    image:
+      repository: azathoth/chat-service
+      tag: latest
+    resources:
+      limits:
+        cpu: 500m
+        memory: 1Gi
+      requests:
+        cpu: 100m
+        memory: 256Mi
+
+  dungeonService:
+    replicaCount: 2
+    image:
+      repository: azathoth/dungeon-service
+      tag: latest
+    resources:
+      limits:
+        cpu: 1000m
+        memory: 2Gi
+      requests:
+        cpu: 250m
+        memory: 512Mi
+
+  activityService:
+    replicaCount: 2
+    image:
+      repository: azathoth/activity-service
+      tag: latest
+    resources:
+      limits:
+        cpu: 500m
+        memory: 1Gi
+      requests:
+        cpu: 100m
+        memory: 256Mi
+
+  guildService:
+    replicaCount: 2
+    image:
+      repository: azathoth/guild-service
+      tag: latest
+    resources:
+      limits:
+        cpu: 500m
+        memory: 1Gi
+      requests:
+        cpu: 100m
+        memory: 256Mi
+
+  tradeService:
+    replicaCount: 2
+    image:
+      repository: azathoth/trade-service
+      tag: latest
+    resources:
+      limits:
+        cpu: 1000m
+        memory: 2Gi
+      requests:
+        cpu: 250m
+        memory: 512Mi
+
+  adminService:
+    replicaCount: 1
+    image:
+      repository: azathoth/admin-service
+      tag: latest
+    resources:
+      limits:
+        cpu: 500m
+        memory: 1Gi
+      requests:
+        cpu: 100m
+        memory: 256Mi
+
+# Database configuration
+postgresql:
+  enabled: true
+  auth:
+    database: azathoth
+    username: azathoth
+    password: ""  # Use secret in production
+  primary:
+    persistence:
+      size: 50Gi
+
+mongodb:
+  enabled: true
+  auth:
+    rootUser: root
+    rootPassword: ""  # Use secret in production
+    database: azathoth
+  persistence:
+    size: 50Gi
+
+redis:
+  enabled: true
+  auth:
+    enabled: true
+    password: ""  # Use secret in production
+  master:
+    persistence:
+      size: 10Gi
+
+kafka:
+  enabled: true
+  kraft:
+    enabled: true
+  persistence:
+    size: 50Gi

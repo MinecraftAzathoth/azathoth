@@ -1,0 +1,18 @@
+# Agones Fleet Autoscaler configuration
+apiVersion: autoscaling.agones.dev/v1
+kind: FleetAutoscaler
+metadata:
+  name: azathoth-game-autoscaler
+  namespace: azathoth
+spec:
+  fleetName: azathoth-game-instances
+  policy:
+    type: Buffer
+    buffer:
+      bufferSize: 3
+      minReplicas: 2
+      maxReplicas: 50
+  sync:
+    type: FixedInterval
+    fixedInterval:
+      seconds: 30

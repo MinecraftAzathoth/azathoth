@@ -1,0 +1,94 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:17-alpine
+    container_name: azathoth-postgres
+    environment:
+      POSTGRES_DB: azathoth
+      POSTGRES_USER: azathoth
+      POSTGRES_PASSWORD: azathoth_dev
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U azathoth"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # MongoDB Database
+  mongodb:
+    image: mongo:8.0
+    container_name: azathoth-mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: azathoth_dev
+      MONGO_INITDB_DATABASE: azathoth
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis Cache
+  redis:
+    image: redis:7.4-alpine
+    container_name: azathoth-redis
+    command: redis-server --requirepass azathoth_dev
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "azathoth_dev", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Kafka (KRaft mode)
+  kafka:
+    image: bitnami/kafka:3.9
+    container_name: azathoth-kafka
+    environment:
+      - KAFKA_CFG_NODE_ID=0
+      - KAFKA_CFG_PROCESS_ROLES=controller,broker
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka:9093
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092
+      - KAFKA_KRAFT_CLUSTER_ID=azathoth-dev-cluster
+    ports:
+      - "9092:9092"
+    volumes:
+      - kafka_data:/bitnami/kafka
+    healthcheck:
+      test: ["CMD-SHELL", "kafka-topics.sh --bootstrap-server localhost:9092 --list"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Kafka UI (optional, for development)
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: azathoth-kafka-ui
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=azathoth-dev
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
+    ports:
+      - "8090:8080"
+    depends_on:
+      - kafka
+
+volumes:
+  postgres_data:
+  mongodb_data:
+  redis_data:
+  kafka_data:

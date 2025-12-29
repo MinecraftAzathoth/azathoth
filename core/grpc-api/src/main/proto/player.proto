@@ -1,0 +1,65 @@
+syntax = "proto3";
+
+package com.azathoth.grpc.player;
+
+option java_multiple_files = true;
+option java_package = "com.azathoth.core.grpc.player";
+
+// 玩家服务定义
+service PlayerService {
+  // 获取玩家信息
+  rpc GetPlayer(GetPlayerRequest) returns (PlayerResponse);
+  
+  // 更新玩家数据
+  rpc UpdatePlayer(UpdatePlayerRequest) returns (PlayerResponse);
+  
+  // 玩家上线通知
+  rpc PlayerJoin(PlayerJoinRequest) returns (PlayerJoinResponse);
+  
+  // 玩家下线通知
+  rpc PlayerLeave(PlayerLeaveRequest) returns (PlayerLeaveResponse);
+}
+
+message GetPlayerRequest {
+  string player_id = 1;
+}
+
+message UpdatePlayerRequest {
+  string player_id = 1;
+  PlayerData data = 2;
+}
+
+message PlayerResponse {
+  bool success = 1;
+  PlayerData player = 2;
+  string error_message = 3;
+}
+
+message PlayerData {
+  string id = 1;
+  string name = 2;
+  int64 last_login = 3;
+  int32 level = 4;
+  int64 experience = 5;
+  map<string, string> metadata = 6;
+}
+
+message PlayerJoinRequest {
+  string player_id = 1;
+  string gateway_id = 2;
+  string instance_id = 3;
+}
+
+message PlayerJoinResponse {
+  bool success = 1;
+  string error_message = 2;
+}
+
+message PlayerLeaveRequest {
+  string player_id = 1;
+  string reason = 2;
+}
+
+message PlayerLeaveResponse {
+  bool success = 1;
+}

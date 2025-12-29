@@ -1,0 +1,97 @@
+syntax = "proto3";
+
+package com.azathoth.grpc.chat;
+
+option java_multiple_files = true;
+option java_package = "com.azathoth.core.grpc.chat";
+
+// 聊天服务定义
+service ChatService {
+  // 发送消息
+  rpc SendMessage(SendMessageRequest) returns (SendMessageResponse);
+  
+  // 订阅频道消息（服务器推送）
+  rpc SubscribeChannel(SubscribeChannelRequest) returns (stream ChatMessageEvent);
+  
+  // 获取历史消息
+  rpc GetHistory(GetHistoryRequest) returns (GetHistoryResponse);
+  
+  // 禁言玩家
+  rpc MutePlayer(MutePlayerRequest) returns (MutePlayerResponse);
+  
+  // 解除禁言
+  rpc UnmutePlayer(UnmutePlayerRequest) returns (UnmutePlayerResponse);
+}
+
+message SendMessageRequest {
+  string player_id = 1;
+  string channel_id = 2;
+  string content = 3;
+  MessageType type = 4;
+  map<string, string> metadata = 5;
+}
+
+message SendMessageResponse {
+  bool success = 1;
+  string message_id = 2;
+  string error_message = 3;
+}
+
+message SubscribeChannelRequest {
+  string player_id = 1;
+  repeated string channel_ids = 2;
+}
+
+message ChatMessageEvent {
+  string message_id = 1;
+  string channel_id = 2;
+  string sender_id = 3;
+  string sender_name = 4;
+  string content = 5;
+  MessageType type = 6;
+  int64 timestamp = 7;
+  map<string, string> metadata = 8;
+}
+
+message GetHistoryRequest {
+  string channel_id = 1;
+  int64 before_timestamp = 2;
+  int32 limit = 3;
+}
+
+message GetHistoryResponse {
+  repeated ChatMessageEvent messages = 1;
+  bool has_more = 2;
+}
+
+message MutePlayerRequest {
+  string player_id = 1;
+  string channel_id = 2;  // 为空表示全局禁言
+  int64 duration_seconds = 3;
+  string reason = 4;
+  string operator_id = 5;
+}
+
+message MutePlayerResponse {
+  bool success = 1;
+  string error_message = 2;
+}
+
+message UnmutePlayerRequest {
+  string player_id = 1;
+  string channel_id = 2;
+  string operator_id = 3;
+}
+
+message UnmutePlayerResponse {
+  bool success = 1;
+  string error_message = 2;
+}
+
+enum MessageType {
+  TEXT = 0;
+  SYSTEM = 1;
+  ITEM_LINK = 2;
+  PLAYER_LINK = 3;
+  EMOTE = 4;
+}

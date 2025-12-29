@@ -1,0 +1,67 @@
+syntax = "proto3";
+
+package com.azathoth.grpc.gateway;
+
+option java_multiple_files = true;
+option java_package = "com.azathoth.core.grpc.gateway";
+
+// Gateway 服务定义
+service GatewayService {
+  // 注册游戏实例
+  rpc RegisterInstance(RegisterInstanceRequest) returns (RegisterInstanceResponse);
+  
+  // 注销游戏实例
+  rpc UnregisterInstance(UnregisterInstanceRequest) returns (UnregisterInstanceResponse);
+  
+  // 实例心跳
+  rpc Heartbeat(HeartbeatRequest) returns (HeartbeatResponse);
+  
+  // 请求传送玩家
+  rpc TransferPlayer(TransferPlayerRequest) returns (TransferPlayerResponse);
+}
+
+message RegisterInstanceRequest {
+  string instance_id = 1;
+  string instance_type = 2;
+  string host = 3;
+  int32 port = 4;
+  int32 max_players = 5;
+  map<string, string> metadata = 6;
+}
+
+message RegisterInstanceResponse {
+  bool success = 1;
+  string error_message = 2;
+}
+
+message UnregisterInstanceRequest {
+  string instance_id = 1;
+}
+
+message UnregisterInstanceResponse {
+  bool success = 1;
+}
+
+message HeartbeatRequest {
+  string instance_id = 1;
+  int32 current_players = 2;
+  float cpu_usage = 3;
+  float memory_usage = 4;
+  int64 timestamp = 5;
+}
+
+message HeartbeatResponse {
+  bool acknowledged = 1;
+}
+
+message TransferPlayerRequest {
+  string player_id = 1;
+  string from_instance = 2;
+  string to_instance = 3;
+  bytes transfer_data = 4;
+}
+
+message TransferPlayerResponse {
+  bool success = 1;
+  string error_message = 2;
+}

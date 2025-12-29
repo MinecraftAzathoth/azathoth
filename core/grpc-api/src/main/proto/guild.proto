@@ -1,0 +1,156 @@
+syntax = "proto3";
+
+package com.azathoth.grpc.guild;
+
+option java_multiple_files = true;
+option java_package = "com.azathoth.core.grpc.guild";
+
+// 公会服务定义
+service GuildService {
+  // 创建公会
+  rpc CreateGuild(CreateGuildRequest) returns (GuildResponse);
+  
+  // 获取公会信息
+  rpc GetGuild(GetGuildRequest) returns (GuildResponse);
+  
+  // 获取玩家公会
+  rpc GetPlayerGuild(GetPlayerGuildRequest) returns (GuildResponse);
+  
+  // 搜索公会
+  rpc SearchGuilds(SearchGuildsRequest) returns (SearchGuildsResponse);
+  
+  // 申请加入
+  rpc ApplyToGuild(ApplyToGuildRequest) returns (ApplicationResponse);
+  
+  // 处理申请
+  rpc HandleApplication(HandleApplicationRequest) returns (ApplicationResponse);
+  
+  // 踢出成员
+  rpc KickMember(KickMemberRequest) returns (MemberOperationResponse);
+  
+  // 设置职位
+  rpc SetMemberRank(SetMemberRankRequest) returns (MemberOperationResponse);
+  
+  // 离开公会
+  rpc LeaveGuild(LeaveGuildRequest) returns (MemberOperationResponse);
+  
+  // 获取成员列表
+  rpc GetMembers(GetMembersRequest) returns (GetMembersResponse);
+}
+
+message CreateGuildRequest {
+  string leader_id = 1;
+  string name = 2;
+  string tag = 3;
+  string description = 4;
+}
+
+message GetGuildRequest {
+  string guild_id = 1;
+}
+
+message GetPlayerGuildRequest {
+  string player_id = 1;
+}
+
+message GuildResponse {
+  bool success = 1;
+  GuildData guild = 2;
+  string error_message = 3;
+}
+
+message GuildData {
+  string guild_id = 1;
+  string name = 2;
+  string tag = 3;
+  string description = 4;
+  string announcement = 5;
+  int32 level = 6;
+  int64 experience = 7;
+  string leader_id = 8;
+  int32 member_count = 9;
+  int32 max_members = 10;
+  int64 funds = 11;
+  int64 created_at = 12;
+  bool recruiting = 13;
+  int32 required_level = 14;
+}
+
+message SearchGuildsRequest {
+  string keyword = 1;
+  int32 limit = 2;
+  int32 offset = 3;
+}
+
+message SearchGuildsResponse {
+  repeated GuildData guilds = 1;
+  int32 total_count = 2;
+}
+
+message ApplyToGuildRequest {
+  string player_id = 1;
+  string guild_id = 2;
+  string message = 3;
+}
+
+message ApplicationResponse {
+  bool success = 1;
+  string application_id = 2;
+  string error_message = 3;
+}
+
+message HandleApplicationRequest {
+  string application_id = 1;
+  string operator_id = 2;
+  bool approved = 3;
+}
+
+message KickMemberRequest {
+  string guild_id = 1;
+  string operator_id = 2;
+  string target_id = 3;
+  string reason = 4;
+}
+
+message SetMemberRankRequest {
+  string guild_id = 1;
+  string operator_id = 2;
+  string target_id = 3;
+  GuildRank new_rank = 4;
+}
+
+message LeaveGuildRequest {
+  string player_id = 1;
+}
+
+message MemberOperationResponse {
+  bool success = 1;
+  string error_message = 2;
+}
+
+message GetMembersRequest {
+  string guild_id = 1;
+}
+
+message GetMembersResponse {
+  repeated GuildMemberData members = 1;
+}
+
+message GuildMemberData {
+  string player_id = 1;
+  string player_name = 2;
+  GuildRank rank = 3;
+  int64 contribution = 4;
+  int64 weekly_contribution = 5;
+  int64 joined_at = 6;
+  int64 last_active_at = 7;
+  bool online = 8;
+}
+
+enum GuildRank {
+  NEWCOMER = 0;
+  MEMBER = 1;
+  ELDER = 2;
+  CO_LEADER = 3;
+  LEADER = 4;
+}

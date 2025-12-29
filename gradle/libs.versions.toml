@@ -1,0 +1,198 @@
+[versions]
+# Kotlin
+kotlin = "2.3.0"
+kotlin-coroutines = "1.10.2"
+kotlin-serialization = "1.10.0-RC"
+
+# Java
+java = "25"
+
+# Build Tools
+gradle = "9.2.1"
+shadow = "9.3.0"
+protobuf-plugin = "0.9.6"
+
+# Minestom
+minestom = "2025.12.20-1.21.11"
+
+# Ktor
+ktor = "3.3.3"
+
+# gRPC
+grpc = "1.76.0"
+grpc-kotlin = "1.5.0"
+protobuf = "4.29.3"
+
+# Database
+postgresql = "42.7.4"
+mongodb = "5.3.1"
+exposed = "1.0.0-rc-4"
+hikari = "7.0.2"
+
+# Redis
+lettuce = "7.2.1.RELEASE"
+jedis = "7.2.0"
+
+# Kafka
+kafka = "4.1.1"
+
+# Logging
+slf4j = "2.0.16"
+logback = "1.5.15"
+kotlin-logging = "7.0.3"
+
+# Serialization
+jackson = "2.18.2"
+
+# Testing
+junit = "5.11.4"
+mockk = "1.13.14"
+testcontainers = "1.20.4"
+
+# Agones
+agones = "1.54.0"
+
+# Utilities
+guava = "33.5.0"
+caffeine = "3.2.3"
+
+[libraries]
+# Kotlin
+kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
+kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
+kotlin-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlin-coroutines" }
+kotlin-coroutines-jdk8 = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8", version.ref = "kotlin-coroutines" }
+kotlin-coroutines-reactive = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-reactive", version.ref = "kotlin-coroutines" }
+kotlin-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlin-serialization" }
+kotlin-serialization-protobuf = { module = "org.jetbrains.kotlinx:kotlinx-serialization-protobuf", version.ref = "kotlin-serialization" }
+kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
+
+# Minestom
+minestom = { module = "net.minestom:minestom", version.ref = "minestom" }
+
+# Ktor Server
+ktor-server-core = { module = "io.ktor:ktor-server-core-jvm", version.ref = "ktor" }
+ktor-server-netty = { module = "io.ktor:ktor-server-netty-jvm", version.ref = "ktor" }
+ktor-server-content-negotiation = { module = "io.ktor:ktor-server-content-negotiation-jvm", version.ref = "ktor" }
+ktor-server-auth = { module = "io.ktor:ktor-server-auth-jvm", version.ref = "ktor" }
+ktor-server-auth-jwt = { module = "io.ktor:ktor-server-auth-jwt-jvm", version.ref = "ktor" }
+ktor-server-websockets = { module = "io.ktor:ktor-server-websockets-jvm", version.ref = "ktor" }
+ktor-server-cors = { module = "io.ktor:ktor-server-cors-jvm", version.ref = "ktor" }
+ktor-server-call-logging = { module = "io.ktor:ktor-server-call-logging-jvm", version.ref = "ktor" }
+ktor-server-status-pages = { module = "io.ktor:ktor-server-status-pages-jvm", version.ref = "ktor" }
+
+# Ktor Client
+ktor-client-core = { module = "io.ktor:ktor-client-core-jvm", version.ref = "ktor" }
+ktor-client-cio = { module = "io.ktor:ktor-client-cio-jvm", version.ref = "ktor" }
+ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation-jvm", version.ref = "ktor" }
+
+# Ktor Serialization
+ktor-serialization-json = { module = "io.ktor:ktor-serialization-kotlinx-json-jvm", version.ref = "ktor" }
+
+# gRPC
+grpc-netty = { module = "io.grpc:grpc-netty-shaded", version.ref = "grpc" }
+grpc-protobuf = { module = "io.grpc:grpc-protobuf", version.ref = "grpc" }
+grpc-stub = { module = "io.grpc:grpc-stub", version.ref = "grpc" }
+grpc-kotlin-stub = { module = "io.grpc:grpc-kotlin-stub", version.ref = "grpc-kotlin" }
+protobuf-java = { module = "com.google.protobuf:protobuf-java", version.ref = "protobuf" }
+protobuf-kotlin = { module = "com.google.protobuf:protobuf-kotlin", version.ref = "protobuf" }
+
+# Database
+postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
+mongodb-driver = { module = "org.mongodb:mongodb-driver-kotlin-coroutine", version.ref = "mongodb" }
+exposed-core = { module = "org.jetbrains.exposed:exposed-core", version.ref = "exposed" }
+exposed-dao = { module = "org.jetbrains.exposed:exposed-dao", version.ref = "exposed" }
+exposed-jdbc = { module = "org.jetbrains.exposed:exposed-jdbc", version.ref = "exposed" }
+exposed-json = { module = "org.jetbrains.exposed:exposed-json", version.ref = "exposed" }
+exposed-kotlin-datetime = { module = "org.jetbrains.exposed:exposed-kotlin-datetime", version.ref = "exposed" }
+hikari = { module = "com.zaxxer:HikariCP", version.ref = "hikari" }
+
+# Redis
+lettuce = { module = "io.lettuce:lettuce-core", version.ref = "lettuce" }
+jedis = { module = "redis.clients:jedis", version.ref = "jedis" }
+
+# Kafka
+kafka-clients = { module = "org.apache.kafka:kafka-clients", version.ref = "kafka" }
+kafka-streams = { module = "org.apache.kafka:kafka-streams", version.ref = "kafka" }
+
+# Logging
+slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
+logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
+kotlin-logging = { module = "io.github.oshai:kotlin-logging-jvm", version.ref = "kotlin-logging" }
+
+# Jackson
+jackson-core = { module = "com.fasterxml.jackson.core:jackson-core", version.ref = "jackson" }
+jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson" }
+jackson-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jackson" }
+
+# Testing
+junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
+junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
+junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
+kotlin-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlin-coroutines" }
+testcontainers = { module = "org.testcontainers:testcontainers", version.ref = "testcontainers" }
+testcontainers-junit = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers" }
+testcontainers-postgresql = { module = "org.testcontainers:postgresql", version.ref = "testcontainers" }
+testcontainers-mongodb = { module = "org.testcontainers:mongodb", version.ref = "testcontainers" }
+testcontainers-kafka = { module = "org.testcontainers:kafka", version.ref = "testcontainers" }
+
+# Utilities
+guava = { module = "com.google.guava:guava", version.ref = "guava" }
+caffeine = { module = "com.github.ben-manes.caffeine:caffeine", version.ref = "caffeine" }
+
+[bundles]
+# Ktor Server Bundle
+ktor-server = [
+    "ktor-server-core",
+    "ktor-server-netty",
+    "ktor-server-content-negotiation",
+    "ktor-server-auth",
+    "ktor-server-auth-jwt",
+    "ktor-server-websockets",
+    "ktor-server-cors",
+    "ktor-server-call-logging",
+    "ktor-server-status-pages",
+    "ktor-serialization-json"
+]
+
+# gRPC Bundle
+grpc = [
+    "grpc-netty",
+    "grpc-protobuf",
+    "grpc-stub",
+    "grpc-kotlin-stub",
+    "protobuf-java",
+    "protobuf-kotlin"
+]
+
+# Database Bundle
+database = [
+    "postgresql",
+    "exposed-core",
+    "exposed-dao",
+    "exposed-jdbc",
+    "exposed-json",
+    "exposed-kotlin-datetime",
+    "hikari"
+]
+
+# Logging Bundle
+logging = [
+    "slf4j-api",
+    "logback-classic",
+    "kotlin-logging"
+]
+
+# Testing Bundle
+testing = [
+    "junit-jupiter",
+    "mockk",
+    "kotlin-coroutines-test"
+]
+
+[plugins]
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }
+protobuf = { id = "com.google.protobuf", version.ref = "protobuf-plugin" }
