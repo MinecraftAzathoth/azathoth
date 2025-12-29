@@ -15,12 +15,12 @@ interface DungeonService {
         minLevel: Int? = null,
         maxLevel: Int? = null,
         difficulty: DungeonDifficulty? = null
-    ): Result<List<DungeonTemplateInfo>, DungeonError>
+    ): Result<List<DungeonTemplateInfo>>
 
     /**
      * 获取副本模板详情
      */
-    suspend fun getTemplate(templateId: String): Result<DungeonTemplateInfo, DungeonError>
+    suspend fun getTemplate(templateId: String): Result<DungeonTemplateInfo>
 
     /**
      * 创建副本实例
@@ -30,30 +30,30 @@ interface DungeonService {
         difficulty: DungeonDifficulty,
         leaderId: PlayerId,
         memberIds: List<PlayerId>
-    ): Result<DungeonInstanceInfo, DungeonError>
+    ): Result<DungeonInstanceInfo>
 
     /**
      * 获取副本实例信息
      */
-    suspend fun getInstance(instanceId: String): Result<DungeonInstanceInfo, DungeonError>
+    suspend fun getInstance(instanceId: String): Result<DungeonInstanceInfo>
 
     /**
      * 加入副本
      */
-    suspend fun joinInstance(instanceId: String, playerId: PlayerId): Result<JoinResult, DungeonError>
+    suspend fun joinInstance(instanceId: String, playerId: PlayerId): Result<JoinResult>
 
     /**
      * 离开副本
      */
-    suspend fun leaveInstance(instanceId: String, playerId: PlayerId): Result<Unit, DungeonError>
+    suspend fun leaveInstance(instanceId: String, playerId: PlayerId): Result<Unit>
 
     /**
      * 获取副本进度
      */
-    suspend fun getProgress(instanceId: String): Result<DungeonProgress, DungeonError>
+    suspend fun getProgress(instanceId: String): Result<DungeonProgress>
 
     /**
      * 完成副本
      */
-    suspend fun completeInstance(instanceId: String, result: DungeonResult): Result<Unit, DungeonError>
+    suspend fun completeInstance(instanceId: String, result: DungeonResult): Result<Unit>
 }

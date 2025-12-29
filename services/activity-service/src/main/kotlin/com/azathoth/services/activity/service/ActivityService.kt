@@ -14,12 +14,12 @@ interface ActivityService {
     suspend fun listActivities(
         state: ActivityState? = null,
         type: ActivityType? = null
-    ): Result<List<ActivityInfo>, ActivityError>
+    ): Result<List<ActivityInfo>>
 
     /**
      * 获取活动详情
      */
-    suspend fun getActivity(activityId: String): Result<ActivityInfo, ActivityError>
+    suspend fun getActivity(activityId: String): Result<ActivityInfo>
 
     /**
      * 获取玩家活动进度
@@ -27,7 +27,7 @@ interface ActivityService {
     suspend fun getPlayerProgress(
         playerId: PlayerId,
         activityId: String
-    ): Result<PlayerActivityProgress, ActivityError>
+    ): Result<PlayerActivityProgress>
 
     /**
      * 加入活动
@@ -35,7 +35,7 @@ interface ActivityService {
     suspend fun joinActivity(
         playerId: PlayerId,
         activityId: String
-    ): Result<PlayerActivityProgress, ActivityError>
+    ): Result<PlayerActivityProgress>
 
     /**
      * 更新活动进度
@@ -44,7 +44,7 @@ interface ActivityService {
         playerId: PlayerId,
         activityId: String,
         progressDelta: Long
-    ): Result<PlayerActivityProgress, ActivityError>
+    ): Result<PlayerActivityProgress>
 
     /**
      * 领取活动奖励
@@ -53,7 +53,7 @@ interface ActivityService {
         playerId: PlayerId,
         activityId: String,
         rewardId: String
-    ): Result<ClaimResult, ActivityError>
+    ): Result<ClaimResult>
 
     /**
      * 获取活动排行榜
@@ -62,5 +62,5 @@ interface ActivityService {
         activityId: String,
         limit: Int = 100,
         offset: Int = 0
-    ): Result<List<ActivityLeaderboardEntry>, ActivityError>
+    ): Result<List<ActivityLeaderboardEntry>>
 }

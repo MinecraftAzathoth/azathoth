@@ -14,12 +14,12 @@ interface QuestService {
     suspend fun listAvailableQuests(
         playerId: PlayerId,
         type: QuestType? = null
-    ): Result<List<QuestInfo>, ActivityError>
+    ): Result<List<QuestInfo>>
 
     /**
      * 获取任务详情
      */
-    suspend fun getQuest(questId: String): Result<QuestInfo, ActivityError>
+    suspend fun getQuest(questId: String): Result<QuestInfo>
 
     /**
      * 获取玩家任务进度
@@ -27,12 +27,12 @@ interface QuestService {
     suspend fun getPlayerQuestProgress(
         playerId: PlayerId,
         questId: String
-    ): Result<PlayerQuestProgress, ActivityError>
+    ): Result<PlayerQuestProgress>
 
     /**
      * 获取玩家所有进行中的任务
      */
-    suspend fun getActiveQuests(playerId: PlayerId): Result<List<PlayerQuestProgress>, ActivityError>
+    suspend fun getActiveQuests(playerId: PlayerId): Result<List<PlayerQuestProgress>>
 
     /**
      * 接受任务
@@ -40,7 +40,7 @@ interface QuestService {
     suspend fun acceptQuest(
         playerId: PlayerId,
         questId: String
-    ): Result<PlayerQuestProgress, ActivityError>
+    ): Result<PlayerQuestProgress>
 
     /**
      * 放弃任务
@@ -48,7 +48,7 @@ interface QuestService {
     suspend fun abandonQuest(
         playerId: PlayerId,
         questId: String
-    ): Result<Unit, ActivityError>
+    ): Result<Unit>
 
     /**
      * 更新任务进度
@@ -58,7 +58,7 @@ interface QuestService {
         questId: String,
         objectiveId: String,
         progressDelta: Int
-    ): Result<PlayerQuestProgress, ActivityError>
+    ): Result<PlayerQuestProgress>
 
     /**
      * 完成任务
@@ -66,7 +66,7 @@ interface QuestService {
     suspend fun completeQuest(
         playerId: PlayerId,
         questId: String
-    ): Result<QuestCompletionResult, ActivityError>
+    ): Result<QuestCompletionResult>
 
     /**
      * 领取任务奖励
@@ -74,10 +74,10 @@ interface QuestService {
     suspend fun claimQuestRewards(
         playerId: PlayerId,
         questId: String
-    ): Result<ClaimResult, ActivityError>
+    ): Result<ClaimResult>
 
     /**
      * 刷新每日任务
      */
-    suspend fun refreshDailyQuests(playerId: PlayerId): Result<List<QuestInfo>, ActivityError>
+    suspend fun refreshDailyQuests(playerId: PlayerId): Result<List<QuestInfo>>
 }

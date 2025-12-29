@@ -15,7 +15,7 @@ interface DungeonRecordService {
         playerId: PlayerId,
         templateId: String? = null,
         limit: Int = 20
-    ): Result<List<DungeonRecord>, DungeonError>
+    ): Result<List<DungeonRecord>>
 
     /**
      * 获取排行榜
@@ -25,7 +25,7 @@ interface DungeonRecordService {
         difficulty: DungeonDifficulty,
         type: LeaderboardType,
         limit: Int = 100
-    ): Result<List<LeaderboardEntry>, DungeonError>
+    ): Result<List<LeaderboardEntry>>
 
     /**
      * 获取玩家排名
@@ -35,7 +35,7 @@ interface DungeonRecordService {
         templateId: String,
         difficulty: DungeonDifficulty,
         type: LeaderboardType
-    ): Result<LeaderboardEntry?, DungeonError>
+    ): Result<LeaderboardEntry?>
 
     /**
      * 检查每日入场次数
@@ -43,5 +43,5 @@ interface DungeonRecordService {
     suspend fun checkDailyEntries(
         playerId: PlayerId,
         templateId: String
-    ): Result<EntryCheckResult, DungeonError>
+    ): Result<EntryCheckResult>
 }

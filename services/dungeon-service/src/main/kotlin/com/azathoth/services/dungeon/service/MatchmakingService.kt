@@ -12,25 +12,25 @@ interface MatchmakingService {
     /**
      * 加入匹配队列
      */
-    suspend fun joinQueue(request: MatchmakingRequest): Result<MatchmakingResult, DungeonError>
+    suspend fun joinQueue(request: MatchmakingRequest): Result<MatchmakingResult>
 
     /**
      * 离开匹配队列
      */
-    suspend fun leaveQueue(playerId: PlayerId): Result<Unit, DungeonError>
+    suspend fun leaveQueue(playerId: PlayerId): Result<Unit>
 
     /**
      * 获取匹配状态
      */
-    suspend fun getQueueStatus(playerId: PlayerId): Result<MatchmakingResult, DungeonError>
+    suspend fun getQueueStatus(playerId: PlayerId): Result<MatchmakingResult>
 
     /**
      * 确认匹配
      */
-    suspend fun confirmMatch(playerId: PlayerId, matchId: String): Result<Unit, DungeonError>
+    suspend fun confirmMatch(playerId: PlayerId, matchId: String): Result<Unit>
 
     /**
      * 拒绝匹配
      */
-    suspend fun declineMatch(playerId: PlayerId, matchId: String): Result<Unit, DungeonError>
+    suspend fun declineMatch(playerId: PlayerId, matchId: String): Result<Unit>
 }

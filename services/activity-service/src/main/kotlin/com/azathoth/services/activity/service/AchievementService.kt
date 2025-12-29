@@ -13,12 +13,12 @@ interface AchievementService {
      */
     suspend fun listAchievements(
         category: AchievementCategory? = null
-    ): Result<List<AchievementInfo>, ActivityError>
+    ): Result<List<AchievementInfo>>
 
     /**
      * 获取成就详情
      */
-    suspend fun getAchievement(achievementId: String): Result<AchievementInfo, ActivityError>
+    suspend fun getAchievement(achievementId: String): Result<AchievementInfo>
 
     /**
      * 获取玩家成就进度
@@ -26,7 +26,7 @@ interface AchievementService {
     suspend fun getPlayerAchievementProgress(
         playerId: PlayerId,
         achievementId: String
-    ): Result<PlayerAchievementProgress, ActivityError>
+    ): Result<PlayerAchievementProgress>
 
     /**
      * 获取玩家所有成就
@@ -34,7 +34,7 @@ interface AchievementService {
     suspend fun getPlayerAchievements(
         playerId: PlayerId,
         category: AchievementCategory? = null
-    ): Result<List<PlayerAchievementProgress>, ActivityError>
+    ): Result<List<PlayerAchievementProgress>>
 
     /**
      * 更新成就进度
@@ -43,10 +43,10 @@ interface AchievementService {
         playerId: PlayerId,
         achievementId: String,
         progressDelta: Int
-    ): Result<AchievementUpdateResult, ActivityError>
+    ): Result<AchievementUpdateResult>
 
     /**
      * 获取成就点数
      */
-    suspend fun getAchievementPoints(playerId: PlayerId): Result<Int, ActivityError>
+    suspend fun getAchievementPoints(playerId: PlayerId): Result<Int>
 }
