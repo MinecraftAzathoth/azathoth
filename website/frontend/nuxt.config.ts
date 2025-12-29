@@ -6,22 +6,26 @@ export default defineNuxtConfig({
     '@nuxt/content',
     '@nuxt/image',
     '@nuxtjs/i18n',
+    '@nuxtjs/tailwindcss',
+    '@nuxtjs/color-mode',
     '@pinia/nuxt',
     '@vueuse/nuxt',
   ],
+
+  css: ['~/assets/css/main.css'],
 
   typescript: {
     strict: true,
   },
 
+  colorMode: {
+    classSuffix: '',
+  },
+
   i18n: {
-    locales: [
-      { code: 'zh', name: '简体中文', file: 'zh.json' },
-      { code: 'en', name: 'English', file: 'en.json' },
-    ],
+    locales: ['zh', 'en'],
     defaultLocale: 'zh',
-    lazy: true,
-    langDir: 'locales',
+    vueI18n: './i18n.config.ts',
   },
 
   content: {
