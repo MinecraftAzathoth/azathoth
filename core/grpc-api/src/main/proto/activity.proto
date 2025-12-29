@@ -1,0 +1,446 @@
+syntax = "proto3";
+
+package com.azathoth.grpc.activity;
+
+option java_multiple_files = true;
+option java_package = "com.azathoth.core.grpc.activity";
+
+// 活动服务定义
+service ActivityService {
+  // 获取活动列表
+  rpc ListActivities(ListActivitiesRequest) returns (ListActivitiesResponse);
+
+  // 获取活动详情
+  rpc GetActivity(GetActivityRequest) returns (GetActivityResponse);
+
+  // 获取玩家活动进度
+  rpc GetPlayerProgress(GetPlayerProgressRequest) returns (GetPlayerProgressResponse);
+
+  // 加入活动
+  rpc JoinActivity(JoinActivityRequest) returns (JoinActivityResponse);
+
+  // 更新活动进度
+  rpc UpdateProgress(UpdateProgressRequest) returns (UpdateProgressResponse);
+
+  // 领取活动奖励
+  rpc ClaimReward(ClaimRewardRequest) returns (ClaimRewardResponse);
+
+  // 获取活动排行榜
+  rpc GetLeaderboard(GetLeaderboardRequest) returns (GetLeaderboardResponse);
+}
+
+// 任务服务定义
+service QuestService {
+  // 获取可用任务列表
+  rpc ListAvailableQuests(ListQuestsRequest) returns (ListQuestsResponse);
+
+  // 获取任务详情
+  rpc GetQuest(GetQuestRequest) returns (GetQuestResponse);
+
+  // 获取玩家任务进度
+  rpc GetPlayerQuestProgress(GetPlayerQuestProgressRequest) returns (GetPlayerQuestProgressResponse);
+
+  // 接受任务
+  rpc AcceptQuest(AcceptQuestRequest) returns (AcceptQuestResponse);
+
+  // 放弃任务
+  rpc AbandonQuest(AbandonQuestRequest) returns (AbandonQuestResponse);
+
+  // 更新任务进度
+  rpc UpdateQuestProgress(UpdateQuestProgressRequest) returns (UpdateQuestProgressResponse);
+
+  // 完成任务
+  rpc CompleteQuest(CompleteQuestRequest) returns (CompleteQuestResponse);
+
+  // 刷新每日任务
+  rpc RefreshDailyQuests(RefreshDailyQuestsRequest) returns (RefreshDailyQuestsResponse);
+}
+
+// 成就服务定义
+service AchievementService {
+  // 获取成就列表
+  rpc ListAchievements(ListAchievementsRequest) returns (ListAchievementsResponse);
+
+  // 获取成就详情
+  rpc GetAchievement(GetAchievementRequest) returns (GetAchievementResponse);
+
+  // 获取玩家成就进度
+  rpc GetPlayerAchievements(GetPlayerAchievementsRequest) returns (GetPlayerAchievementsResponse);
+
+  // 更新成就进度
+  rpc UpdateAchievementProgress(UpdateAchievementProgressRequest) returns (UpdateAchievementProgressResponse);
+
+  // 获取成就点数
+  rpc GetAchievementPoints(GetAchievementPointsRequest) returns (GetAchievementPointsResponse);
+}
+
+// ==================== 活动相关消息 ====================
+
+message ListActivitiesRequest {
+  ActivityState state = 1;
+  ActivityType type = 2;
+}
+
+message ListActivitiesResponse {
+  repeated ActivityData activities = 1;
+}
+
+message GetActivityRequest {
+  string activity_id = 1;
+}
+
+message GetActivityResponse {
+  bool success = 1;
+  ActivityData activity = 2;
+  string error_message = 3;
+}
+
+message ActivityData {
+  string activity_id = 1;
+  string name = 2;
+  string description = 3;
+  ActivityType type = 4;
+  ActivityState state = 5;
+  int64 start_time = 6;
+  int64 end_time = 7;
+  int32 min_level = 8;
+  int32 max_participants = 9;
+  repeated ActivityRewardData rewards = 10;
+}
+
+message ActivityRewardData {
+  string reward_id = 1;
+  string name = 2;
+  string description = 3;
+  string item_id = 4;
+  int32 amount = 5;
+  int32 threshold = 6;
+}
+
+message GetPlayerProgressRequest {
+  string player_id = 1;
+  string activity_id = 2;
+}
+
+message GetPlayerProgressResponse {
+  bool success = 1;
+  PlayerActivityProgressData progress = 2;
+  string error_message = 3;
+}
+
+message PlayerActivityProgressData {
+  string player_id = 1;
+  string activity_id = 2;
+  int64 score = 3;
+  int32 rank = 4;
+  repeated string completed_objectives = 5;
+  repeated string claimed_rewards = 6;
+  int64 joined_at = 7;
+  int64 last_updated_at = 8;
+}
+
+message JoinActivityRequest {
+  string player_id = 1;
+  string activity_id = 2;
+}
+
+message JoinActivityResponse {
+  bool success = 1;
+  PlayerActivityProgressData progress = 2;
+  string error_message = 3;
+}
+
+message UpdateProgressRequest {
+  string player_id = 1;
+  string activity_id = 2;
+  int64 progress_delta = 3;
+}
+
+message UpdateProgressResponse {
+  bool success = 1;
+  PlayerActivityProgressData progress = 2;
+  string error_message = 3;
+}
+
+message ClaimRewardRequest {
+  string player_id = 1;
+  string activity_id = 2;
+  string reward_id = 3;
+}
+
+message ClaimRewardResponse {
+  bool success = 1;
+  repeated ClaimedRewardData rewards = 2;
+  string error_message = 3;
+}
+
+message ClaimedRewardData {
+  string item_id = 1;
+  int32 amount = 2;
+}
+
+message GetLeaderboardRequest {
+  string activity_id = 1;
+  int32 limit = 2;
+  int32 offset = 3;
+}
+
+message GetLeaderboardResponse {
+  repeated LeaderboardEntryData entries = 1;
+  int32 total_count = 2;
+}
+
+message LeaderboardEntryData {
+  int32 rank = 1;
+  string player_id = 2;
+  string player_name = 3;
+  int64 score = 4;
+  int64 updated_at = 5;
+}
+
+// ==================== 任务相关消息 ====================
+
+message ListQuestsRequest {
+  string player_id = 1;
+  QuestType type = 2;
+}
+
+message ListQuestsResponse {
+  repeated QuestData quests = 1;
+}
+
+message GetQuestRequest {
+  string quest_id = 1;
+}
+
+message GetQuestResponse {
+  bool success = 1;
+  QuestData quest = 2;
+  string error_message = 3;
+}
+
+message QuestData {
+  string quest_id = 1;
+  string name = 2;
+  string description = 3;
+  QuestType type = 4;
+  repeated QuestObjectiveData objectives = 5;
+  repeated QuestRewardData rewards = 6;
+  repeated string prerequisites = 7;
+  int64 expires_at = 8;
+}
+
+message QuestObjectiveData {
+  string objective_id = 1;
+  string description = 2;
+  string type = 3;
+  int32 target = 4;
+}
+
+message QuestRewardData {
+  string item_id = 1;
+  int32 amount = 2;
+  int64 experience = 3;
+  int64 gold = 4;
+}
+
+message GetPlayerQuestProgressRequest {
+  string player_id = 1;
+  string quest_id = 2;
+}
+
+message GetPlayerQuestProgressResponse {
+  bool success = 1;
+  PlayerQuestProgressData progress = 2;
+  string error_message = 3;
+}
+
+message PlayerQuestProgressData {
+  string player_id = 1;
+  string quest_id = 2;
+  QuestState state = 3;
+  map<string, int32> objective_progress = 4;
+  int64 started_at = 5;
+  int64 completed_at = 6;
+}
+
+message AcceptQuestRequest {
+  string player_id = 1;
+  string quest_id = 2;
+}
+
+message AcceptQuestResponse {
+  bool success = 1;
+  PlayerQuestProgressData progress = 2;
+  string error_message = 3;
+}
+
+message AbandonQuestRequest {
+  string player_id = 1;
+  string quest_id = 2;
+}
+
+message AbandonQuestResponse {
+  bool success = 1;
+  string error_message = 2;
+}
+
+message UpdateQuestProgressRequest {
+  string player_id = 1;
+  string quest_id = 2;
+  string objective_id = 3;
+  int32 progress_delta = 4;
+}
+
+message UpdateQuestProgressResponse {
+  bool success = 1;
+  PlayerQuestProgressData progress = 2;
+  string error_message = 3;
+}
+
+message CompleteQuestRequest {
+  string player_id = 1;
+  string quest_id = 2;
+}
+
+message CompleteQuestResponse {
+  bool success = 1;
+  repeated QuestRewardData rewards = 2;
+  string error_message = 3;
+}
+
+message RefreshDailyQuestsRequest {
+  string player_id = 1;
+}
+
+message RefreshDailyQuestsResponse {
+  bool success = 1;
+  repeated QuestData quests = 2;
+  string error_message = 3;
+}
+
+// ==================== 成就相关消息 ====================
+
+message ListAchievementsRequest {
+  AchievementCategory category = 1;
+}
+
+message ListAchievementsResponse {
+  repeated AchievementData achievements = 1;
+}
+
+message GetAchievementRequest {
+  string achievement_id = 1;
+}
+
+message GetAchievementResponse {
+  bool success = 1;
+  AchievementData achievement = 2;
+  string error_message = 3;
+}
+
+message AchievementData {
+  string achievement_id = 1;
+  string name = 2;
+  string description = 3;
+  AchievementCategory category = 4;
+  int32 points = 5;
+  string icon = 6;
+  bool hidden = 7;
+  repeated AchievementTierData tiers = 8;
+}
+
+message AchievementTierData {
+  int32 tier = 1;
+  string name = 2;
+  int32 threshold = 3;
+  repeated QuestRewardData rewards = 4;
+}
+
+message GetPlayerAchievementsRequest {
+  string player_id = 1;
+  AchievementCategory category = 2;
+}
+
+message GetPlayerAchievementsResponse {
+  repeated PlayerAchievementProgressData achievements = 1;
+}
+
+message PlayerAchievementProgressData {
+  string player_id = 1;
+  string achievement_id = 2;
+  int32 current_progress = 3;
+  int32 current_tier = 4;
+  repeated int32 completed_tiers = 5;
+  int64 unlocked_at = 6;
+}
+
+message UpdateAchievementProgressRequest {
+  string player_id = 1;
+  string achievement_id = 2;
+  int32 progress_delta = 3;
+}
+
+message UpdateAchievementProgressResponse {
+  bool success = 1;
+  PlayerAchievementProgressData progress = 2;
+  int32 tier_unlocked = 3;
+  bool completed = 4;
+  repeated QuestRewardData rewards = 5;
+  string error_message = 6;
+}
+
+message GetAchievementPointsRequest {
+  string player_id = 1;
+}
+
+message GetAchievementPointsResponse {
+  int32 total_points = 1;
+}
+
+// ==================== 枚举定义 ====================
+
+enum ActivityState {
+  ACTIVITY_SCHEDULED = 0;
+  ACTIVITY_PREPARING = 1;
+  ACTIVITY_ACTIVE = 2;
+  ACTIVITY_ENDING = 3;
+  ACTIVITY_ENDED = 4;
+  ACTIVITY_CANCELLED = 5;
+}
+
+enum ActivityType {
+  LIMITED_TIME = 0;
+  RECURRING = 1;
+  PERMANENT = 2;
+  SPECIAL_EVENT = 3;
+  SEASONAL = 4;
+}
+
+enum QuestState {
+  QUEST_LOCKED = 0;
+  QUEST_AVAILABLE = 1;
+  QUEST_IN_PROGRESS = 2;
+  QUEST_COMPLETED = 3;
+  QUEST_CLAIMED = 4;
+}
+
+enum QuestType {
+  QUEST_DAILY = 0;
+  QUEST_WEEKLY = 1;
+  QUEST_MAIN = 2;
+  QUEST_SIDE = 3;
+  QUEST_EVENT = 4;
+  QUEST_ACHIEVEMENT = 5;
+}
+
+enum AchievementCategory {
+  ACHIEVEMENT_COMBAT = 0;
+  ACHIEVEMENT_EXPLORATION = 1;
+  ACHIEVEMENT_COLLECTION = 2;
+  ACHIEVEMENT_SOCIAL = 3;
+  ACHIEVEMENT_DUNGEON = 4;
+  ACHIEVEMENT_CRAFTING = 5;
+  ACHIEVEMENT_ECONOMY = 6;
+  ACHIEVEMENT_SPECIAL = 7;
+}
