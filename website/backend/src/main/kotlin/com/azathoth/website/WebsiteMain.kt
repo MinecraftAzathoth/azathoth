@@ -18,9 +18,10 @@ import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.serialization.json.Json
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.v1.jdbc.Database
+import org.jetbrains.exposed.v1.jdbc.SchemaUtils
+import org.jetbrains.exposed.v1.jdbc.transactions.transaction
+import org.jetbrains.exposed.v1.migration.jdbc.MigrationUtils
 
 private val logger = KotlinLogging.logger {}
 
@@ -121,7 +122,7 @@ fun Application.configureDatabase() {
     )
 
     transaction {
-        SchemaUtils.createMissingTablesAndColumns(
+        MigrationUtils.statementsRequiredForDatabaseMigration(
             Resources,
             ResourceVersions,
             ResourcePricing,

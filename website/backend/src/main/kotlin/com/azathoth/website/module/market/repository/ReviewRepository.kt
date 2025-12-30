@@ -1,20 +1,19 @@
 package com.azathoth.website.module.market.repository
 
-import com.azathoth.website.module.market.dto.*
-import com.azathoth.website.module.market.table.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.datetime.Clock
-import kotlinx.datetime.toJavaInstant
-import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.plus
-import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
+import com.azathoth.website.module.market.dto.ResourceReviewDTO
+import com.azathoth.website.module.market.table.ResourceReviews
+import com.azathoth.website.module.market.table.Resources
+import com.azathoth.website.module.market.table.ReviewHelpful
+import org.jetbrains.exposed.v1.core.*
+import org.jetbrains.exposed.v1.jdbc.*
+import org.jetbrains.exposed.v1.jdbc.transactions.suspendTransaction
 import java.util.*
+import kotlin.time.Clock
 
 class ReviewRepository {
 
     private suspend fun <T> dbQuery(block: suspend () -> T): T =
-        newSuspendedTransaction(Dispatchers.IO) { block() }
+        suspendTransaction { block() }
 
     /**
      * 获取资源评论
@@ -51,7 +50,7 @@ class ReviewRepository {
 
         if (existing != null) return@dbQuery null
 
-        val now = Clock.System.now().toJavaInstant()
+        val now = Clock.System.now()
         val reviewId = ResourceReviews.insertAndGetId {
             it[ResourceReviews.resourceId] = resourceId
             it[ResourceReviews.userId] = userId
@@ -74,7 +73,7 @@ class ReviewRepository {
      * 更新评论
      */
     suspend fun updateReview(reviewId: UUID, rating: Int?, content: String?): ResourceReviewDTO? = dbQuery {
-        val now = Clock.System.now().toJavaInstant()
+        val now = Clock.System.now()
 
         val review = ResourceReviews.selectAll()
             .where { ResourceReviews.id eq reviewId }
@@ -120,7 +119,7 @@ class ReviewRepository {
      * 作者回复
      */
     suspend fun replyToReview(reviewId: UUID, reply: String): ResourceReviewDTO? = dbQuery {
-        val now = Clock.System.now().toJavaInstant()
+        val now = Clock.System.now()
 
         ResourceReviews.update({ ResourceReviews.id eq reviewId }) {
             it[authorReply] = reply

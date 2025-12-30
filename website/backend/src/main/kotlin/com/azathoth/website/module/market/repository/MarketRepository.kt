@@ -2,18 +2,16 @@ package com.azathoth.website.module.market.repository
 
 import com.azathoth.website.module.market.dto.*
 import com.azathoth.website.module.market.table.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.datetime.Clock
-import kotlinx.datetime.toJavaInstant
-import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
+import org.jetbrains.exposed.v1.core.*
+import org.jetbrains.exposed.v1.jdbc.*
+import org.jetbrains.exposed.v1.jdbc.transactions.suspendTransaction
 import java.util.*
+import kotlin.time.Clock
 
 class MarketRepository {
 
     private suspend fun <T> dbQuery(block: suspend () -> T): T =
-        newSuspendedTransaction(Dispatchers.IO) { block() }
+        suspendTransaction { block() }
 
     /**
      * 搜索资源
@@ -125,7 +123,7 @@ class MarketRepository {
         authorName: String,
         request: CreateResourceRequestDTO
     ): ResourceDTO? = dbQuery {
-        val now = Clock.System.now().toJavaInstant()
+        val now = Clock.System.now()
         val slug = generateSlug(request.name)
 
         val resourceId = Resources.insertAndGetId {
@@ -176,7 +174,7 @@ class MarketRepository {
      * 更新资源
      */
     suspend fun updateResource(resourceId: UUID, request: UpdateResourceRequestDTO): ResourceDTO? = dbQuery {
-        val now = Clock.System.now().toJavaInstant()
+        val now = Clock.System.now()
 
         Resources.update({ Resources.id eq resourceId }) {
             request.name?.let { name -> it[Resources.name] = name }
@@ -252,8 +250,8 @@ class MarketRepository {
         request: PublishVersionRequestDTO,
         downloadUrl: String,
         fileSize: Long
-    ): ResourceVersionDTO? = dbQuery {
-        val now = Clock.System.now().toJavaInstant()
+    ): ResourceVersionDTO = dbQuery {
+        val now = Clock.System.now()
 
         ResourceVersions.insert {
             it[ResourceVersions.resourceId] = resourceId
