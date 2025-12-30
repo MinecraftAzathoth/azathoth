@@ -53,7 +53,7 @@ testcontainers = "1.20.4"
 agones = "1.54.0"
 
 # Utilities
-guava = "33.5.0"
+guava = "33.5.0-jre"
 caffeine = "3.2.3"
 
 [libraries]
