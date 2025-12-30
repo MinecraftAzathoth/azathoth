@@ -50,8 +50,8 @@ include(":sdk:azathoth-gradle-plugin")
 // ==================== Client Mod ====================
 include(":client-mod")
 
-// ==================== Website Backend ====================
-include(":website:backend")
+// Note: Website is deployed separately and not included in framework project
+// Website project is located in website/ directory, requires separate build and deployment
 
 // Enable Type-Safe Project Accessors
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
