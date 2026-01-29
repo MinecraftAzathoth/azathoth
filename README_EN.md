@@ -2,7 +2,7 @@
 
 # Azathoth
 
-[![GitHub stars](https://img.shields.io/github/stars/zhibeigg/azathoth?style=flat-square&logo=github)](https://github.com/zhibeigg/azathoth/stargazers)
+[![GitHub stars](https://img.shields.io/github/stars/MinecraftAzathoth/azathoth?style=flat-square&logo=github)](https://github.com/MinecraftAzathoth/azathoth/stargazers)
 [![Website](https://img.shields.io/badge/Website-mcwar.cn-FF6B6B?style=flat-square&logo=globe&logoColor=white)](https://www.mcwar.cn)
 [![Kotlin](https://img.shields.io/badge/Kotlin-2.3.0-7F52FF?style=flat-square&logo=kotlin&logoColor=white)](https://kotlinlang.org/)
 [![Java](https://img.shields.io/badge/Java-25-ED8B00?style=flat-square&logo=openjdk&logoColor=white)](https://openjdk.org/)
@@ -15,7 +15,7 @@
 
 English | [简体中文](README.md)
 
-[Website](https://www.mcwar.cn) · [Documentation](https://docs.mcwar.cn) · [Report Issues](https://github.com/zhibeigg/azathoth/issues)
+[Website](https://www.mcwar.cn) · [Documentation](https://docs.mcwar.cn) · [Report Issues](https://github.com/MinecraftAzathoth/azathoth/issues)
 
 </div>
 
@@ -154,7 +154,7 @@ More than a framework—it's an ecosystem. Official marketplace supports plugin 
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/zhibeigg/azathoth.git
+git clone https://github.com/MinecraftAzathoth/azathoth.git
 cd azathoth
 
 # 2. Start infrastructure services
@@ -418,7 +418,7 @@ git clone https://github.com/YOUR_USERNAME/azathoth.git
 cd azathoth
 
 # 2. Add upstream remote
-git remote add upstream https://github.com/zhibeigg/azathoth.git
+git remote add upstream https://github.com/MinecraftAzathoth/azathoth.git
 
 # 3. Create a feature branch
 git checkout -b feature/amazing-feature
@@ -494,8 +494,8 @@ docs(readme): update installation instructions
 
 ### Issue Reporting
 
-- **Bug Reports**: [GitHub Issues](https://github.com/zhibeigg/azathoth/issues/new?template=bug_report.md)
-- **Feature Requests**: [GitHub Discussions](https://github.com/zhibeigg/azathoth/discussions/categories/ideas)
+- **Bug Reports**: [GitHub Issues](https://github.com/MinecraftAzathoth/azathoth/issues/new?template=bug_report.md)
+- **Feature Requests**: [GitHub Discussions](https://github.com/MinecraftAzathoth/azathoth/discussions/categories/ideas)
 - **Security Vulnerabilities**: Please email security@mcwar.cn
 
 ---
@@ -571,8 +571,8 @@ See the full license text in the [LICENSE](LICENSE) file.
 
 - **Website**: [www.mcwar.cn](https://www.mcwar.cn)
 - **Documentation**: [docs.mcwar.cn](https://docs.mcwar.cn)
-- **Issue Tracker**: [GitHub Issues](https://github.com/zhibeigg/azathoth/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/zhibeigg/azathoth/discussions)
+- **Issue Tracker**: [GitHub Issues](https://github.com/MinecraftAzathoth/azathoth/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/MinecraftAzathoth/azathoth/discussions)
 
 ---
 
