@@ -7,11 +7,13 @@ import com.azathoth.gateway.auth.OfflineModeAuthenticator
 import com.azathoth.gateway.balancer.BalancingStrategy
 import com.azathoth.gateway.balancer.DefaultGatewayLoadBalancer
 import com.azathoth.gateway.balancer.DefaultHealthChecker
+import com.azathoth.gateway.grpc.GatewayServiceGrpcImpl
 import com.azathoth.gateway.routing.DefaultInstanceRegistry
 import com.azathoth.gateway.routing.DefaultRouter
 import com.azathoth.gateway.session.DefaultSessionManager
 import com.azathoth.gateway.transfer.DefaultTransferManager
 import io.github.oshai.kotlinlogging.KotlinLogging
+import io.grpc.ServerBuilder
 
 private val logger = KotlinLogging.logger {}
 
@@ -53,8 +55,25 @@ suspend fun main(args: Array<String>) {
     val transferManager = DefaultTransferManager()
     logger.info { "传送管理器已初始化" }
 
+    // gRPC 服务器
+    val grpcPort = System.getenv("GRPC_PORT")?.toIntOrNull() ?: 9090
+    val grpcServer = ServerBuilder.forPort(grpcPort)
+        .addService(GatewayServiceGrpcImpl(instanceRegistry))
+        .build()
+        .start()
+    logger.info { "gRPC 服务器已启动，端口: $grpcPort (已注册: GatewayService)" }
+
     // 启动健康检查
     healthChecker.startPeriodicCheck(30_000L)
 
     logger.info { "Gateway started on port ${AzathothConstants.DEFAULT_GATEWAY_PORT}" }
+
+    // 等待 gRPC 服务器终止
+    Runtime.getRuntime().addShutdownHook(Thread {
+        logger.info { "正在关闭 Gateway..." }
+        grpcServer.shutdown()
+        logger.info { "Gateway 已关闭" }
+    })
+
+    grpcServer.awaitTermination()
 }

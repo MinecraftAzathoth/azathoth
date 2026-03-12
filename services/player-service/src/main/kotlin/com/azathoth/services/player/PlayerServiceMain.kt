@@ -1,5 +1,6 @@
 package com.azathoth.services.player
 
+import com.azathoth.services.player.grpc.PlayerServiceGrpcImpl
 import com.azathoth.services.player.repository.InMemoryPlayerRepository
 import com.azathoth.services.player.service.DefaultInventoryService
 import com.azathoth.services.player.service.DefaultPlayerService
@@ -24,9 +25,10 @@ fun main() {
     // gRPC 服务器
     val grpcPort = System.getenv("GRPC_PORT")?.toIntOrNull() ?: 9090
     val grpcServer = ServerBuilder.forPort(grpcPort)
+        .addService(PlayerServiceGrpcImpl(playerService))
         .build()
         .start()
-    logger.info { "gRPC 服务器已启动，端口: $grpcPort" }
+    logger.info { "gRPC 服务器已启动，端口: $grpcPort (已注册: PlayerService)" }
 
     // HTTP 服务器（健康检查 + API）
     val httpPort = System.getenv("HTTP_PORT")?.toIntOrNull() ?: 8080
