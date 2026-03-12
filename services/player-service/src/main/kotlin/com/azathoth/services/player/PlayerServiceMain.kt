@@ -1,7 +1,9 @@
 package com.azathoth.services.player
 
+import com.azathoth.core.common.database.DatabaseConfig
+import com.azathoth.core.common.database.DatabaseFactory
 import com.azathoth.services.player.grpc.PlayerServiceGrpcImpl
-import com.azathoth.services.player.repository.InMemoryPlayerRepository
+import com.azathoth.services.player.repository.*
 import com.azathoth.services.player.service.DefaultInventoryService
 import com.azathoth.services.player.service.DefaultPlayerService
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -16,8 +18,24 @@ private val logger = KotlinLogging.logger {}
 fun main() {
     logger.info { "正在启动 Player Service..." }
 
+    // 数据库 / 仓库
+    val useDb = System.getenv("DB_ENABLED")?.toBoolean() ?: false
+    val dbFactory: DatabaseFactory?
+    val repository: PlayerRepository
+
+    if (useDb) {
+        val config = DatabaseConfig.fromEnv(defaultDb = "azathoth")
+        dbFactory = DatabaseFactory.create(config)
+        dbFactory.createTables(Players, PlayerStatsTable)
+        repository = PostgresPlayerRepository(dbFactory)
+        logger.info { "使用 PostgreSQL 持久化存储" }
+    } else {
+        dbFactory = null
+        repository = InMemoryPlayerRepository()
+        logger.info { "使用内存存储（设置 DB_ENABLED=true 启用数据库）" }
+    }
+
     // 业务组件
-    val repository = InMemoryPlayerRepository()
     val playerService = DefaultPlayerService(repository)
     val inventoryService = DefaultInventoryService()
     logger.info { "业务组件已初始化 (PlayerService, InventoryService)" }
@@ -46,6 +64,7 @@ fun main() {
         logger.info { "正在关闭 Player Service..." }
         httpServer.stop(1000, 5000)
         grpcServer.shutdown()
+        dbFactory?.close()
         logger.info { "Player Service 已关闭" }
     })
 

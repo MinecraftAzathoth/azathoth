@@ -18,5 +18,11 @@ dependencies {
     api(libs.jackson.kotlin)
     api("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:${libs.versions.jackson.get()}")
 
+    // Database (Exposed ORM + HikariCP)
+    api(libs.exposed.core)
+    api(libs.exposed.dao)
+    api(libs.exposed.jdbc)
+    api(libs.hikari)
+
     testImplementation(libs.kotlin.coroutines.test)
 }

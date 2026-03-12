@@ -138,6 +138,7 @@ testcontainers-junit = { module = "org.testcontainers:junit-jupiter", version.re
 testcontainers-postgresql = { module = "org.testcontainers:postgresql", version.ref = "testcontainers" }
 testcontainers-mongodb = { module = "org.testcontainers:mongodb", version.ref = "testcontainers" }
 testcontainers-kafka = { module = "org.testcontainers:kafka", version.ref = "testcontainers" }
+h2 = { module = "com.h2database:h2", version = "2.3.232" }
 
 # Utilities
 guava = { module = "com.google.guava:guava", version.ref = "guava" }
