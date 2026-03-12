@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "azathoth.fullname" . }}-trade-service
+  labels:
+    {{- include "azathoth.labels" . | nindent 4 }}
+    app.kubernetes.io/component: trade-service
+spec:
+  replicas: {{ .Values.services.tradeService.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "azathoth.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: trade-service
+  template:
+    metadata:
+      labels:
+        {{- include "azathoth.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: trade-service
+    spec:
+      {{- with .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: trade-service
+          image: {{ include "azathoth.image" .Values.services.tradeService.image }}
+          imagePullPolicy: {{ .Values.services.tradeService.image.pullPolicy | default "IfNotPresent" }}
+          ports:
+            - name: grpc
+              containerPort: 9090
+              protocol: TCP
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: {{ include "azathoth.fullname" . }}-config
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+          readinessProbe:
+            httpGet:
+              path: /health/ready
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health/live
+              port: http
+            initialDelaySeconds: 20
+            periodSeconds: 15
+          resources:
+            {{- toYaml .Values.services.tradeService.resources | nindent 12 }}

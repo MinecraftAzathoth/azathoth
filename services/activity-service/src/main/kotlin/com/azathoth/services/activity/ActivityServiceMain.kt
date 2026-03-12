@@ -6,6 +6,11 @@ import com.azathoth.services.activity.service.DefaultActivityScheduler
 import com.azathoth.services.activity.service.DefaultActivityService
 import com.azathoth.services.activity.service.DefaultQuestService
 import io.github.oshai.kotlinlogging.KotlinLogging
+import io.grpc.ServerBuilder
+import io.ktor.server.engine.*
+import io.ktor.server.netty.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
 import java.time.Duration
 import java.time.Instant
 
@@ -14,6 +19,7 @@ private val logger = KotlinLogging.logger {}
 fun main() {
     logger.info { "正在启动 Activity Service..." }
 
+    // 业务组件
     val activityService = DefaultActivityService()
     val questService = DefaultQuestService()
     val achievementService = DefaultAchievementService()
@@ -66,10 +72,31 @@ fun main() {
             )
         )
     )
+    logger.info { "业务组件已初始化 (ActivityService, QuestService, AchievementService, Scheduler)" }
 
-    logger.info { "Activity Service 组件初始化完成" }
-    logger.info { "  - ActivityService: DefaultActivityService" }
-    logger.info { "  - QuestService: DefaultQuestService" }
-    logger.info { "  - AchievementService: DefaultAchievementService" }
-    logger.info { "  - ActivityScheduler: DefaultActivityScheduler" }
+    // gRPC 服务器
+    val grpcPort = System.getenv("GRPC_PORT")?.toIntOrNull() ?: 9090
+    val grpcServer = ServerBuilder.forPort(grpcPort).build().start()
+    logger.info { "gRPC 服务器已启动，端口: $grpcPort" }
+
+    // HTTP 服务器
+    val httpPort = System.getenv("HTTP_PORT")?.toIntOrNull() ?: 8080
+    val httpServer = embeddedServer(Netty, port = httpPort) {
+        routing {
+            get("/health/live") { call.respondText("OK") }
+            get("/health/ready") { call.respondText("OK") }
+        }
+    }.start(wait = false)
+    logger.info { "HTTP 服务器已启动，端口: $httpPort" }
+
+    logger.info { "Activity Service 启动完成" }
+
+    Runtime.getRuntime().addShutdownHook(Thread {
+        logger.info { "正在关闭 Activity Service..." }
+        httpServer.stop(1000, 5000)
+        grpcServer.shutdown()
+        logger.info { "Activity Service 已关闭" }
+    })
+
+    grpcServer.awaitTermination()
 }
