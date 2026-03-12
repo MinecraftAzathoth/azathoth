@@ -145,10 +145,10 @@ More than a framework—it's an ecosystem. Official marketplace supports plugin 
 
 ### Requirements
 
-- **JDK 25+** (recommended: [Eclipse Temurin](https://adoptium.net/))
-- **Kotlin 2.3.0+**
+- **JDK 21+** (recommended: [Eclipse Temurin](https://adoptium.net/), JDK 25 for production)
 - **Docker & Docker Compose**
-- **Gradle 9.2.1+** (Wrapper included)
+- **Node.js 20+** (admin frontend)
+- **Gradle 9.2.1+** (Wrapper included, no manual install needed)
 
 ### Local Development Environment
 
@@ -157,7 +157,7 @@ More than a framework—it's an ecosystem. Official marketplace supports plugin 
 git clone https://github.com/MinecraftAzathoth/azathoth.git
 cd azathoth
 
-# 2. Start infrastructure services
+# 2. Start infrastructure (PostgreSQL, MongoDB, Redis, Kafka)
 docker-compose -f deploy/docker/docker-compose.yml up -d
 
 # 3. Build the project
@@ -168,18 +168,24 @@ docker-compose -f deploy/docker/docker-compose.yml up -d
 
 # 5. Run Game Instance (new terminal)
 ./gradlew :game-instance:run
+
+# 6. Run admin frontend (new terminal)
+cd admin-frontend
+npm install
+npm run dev
+```
+
+### Common Build Commands
+
+```bash
+./gradlew build                    # Build entire project
+./gradlew :gateway:build           # Build single module
+./gradlew test                     # Run all tests
+./gradlew :game-instance:test      # Run single module tests
+./gradlew :gateway:shadowJar       # Generate executable JAR
 ```
 
 ### Plugin Development
-
-```bash
-# Use the project generator to create a plugin project (coming soon)
-# Visit https://www.mcwar.cn/generator
-
-# Or create manually
-mkdir my-plugin && cd my-plugin
-./gradlew init --type kotlin-library
-```
 
 ```kotlin
 // build.gradle.kts
@@ -199,13 +205,10 @@ dependencies {
 # 1. Configure Kubernetes cluster (Agones required)
 kubectl apply -f deploy/agones/
 
-# 2. Deploy infrastructure
-helm install azathoth-infra deploy/helm/infrastructure/
-
-# 3. Deploy game services
+# 2. Deploy game services
 helm install azathoth deploy/helm/azathoth/
 
-# 4. Check status
+# 3. Check status
 kubectl get fleet -n azathoth
 ```
 
@@ -429,7 +432,6 @@ git checkout -b feature/amazing-feature
 
 # 5. Run tests to ensure they pass
 ./gradlew test
-./gradlew ktlintCheck
 
 # 6. Commit changes (follow Conventional Commits)
 git commit -m "feat(skills): add fireball skill implementation"
@@ -463,10 +465,10 @@ docs(readme): update installation instructions
 ### Code Standards
 
 - Follow [Kotlin Official Coding Conventions](https://kotlinlang.org/docs/coding-conventions.html)
-- Use `ktlint` for code formatting: `./gradlew ktlintFormat`
 - Public APIs must have KDoc comments
 - New features must include unit tests
-- Maintain test coverage above 80%
+- Never abuse `!!` — prefer Kotlin null safety, explicit null checks, and result objects
+- Database and Redis I/O must be handled asynchronously
 
 ### Test Commands
 
@@ -476,12 +478,8 @@ docs(readme): update installation instructions
 
 # Run specific module tests
 ./gradlew :game-instance:test
-
-# Run integration tests (requires Docker)
-./gradlew integrationTest
-
-# Generate test coverage report
-./gradlew jacocoTestReport
+./gradlew :gateway:test
+./gradlew :services:player-service:test
 ```
 
 ### Branch Strategy
@@ -504,26 +502,26 @@ docs(readme): update installation instructions
 
 ## Roadmap
 
-### v0.1.0 - Foundation (Current)
+### v0.1.0 - Foundation ✅
 - [x] Project structure setup
 - [x] Core API design
 - [x] Gateway basic functionality
 - [x] Game Instance basic functionality
 - [x] Plugin system framework
 
-### v0.2.0 - Core Gameplay
+### v0.2.0 - Core Gameplay ✅
 - [x] Combat system
 - [x] Skill system
 - [x] Dungeon system
 - [ ] AI behavior trees
 
-### v0.3.0 - Social & Economy
+### v0.3.0 - Social & Economy ✅
 - [x] Guild system
 - [x] Trading system
 - [x] Chat system
 - [ ] Mail system
 
-### v0.4.0 - Operations Tools
+### v0.4.0 - Operations Tools (Current)
 - [x] Admin dashboard
 - [x] Data analytics
 - [x] Activity system
