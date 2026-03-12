@@ -29,6 +29,8 @@ dependencies {
     implementation(libs.kotlin.coroutines.core)
     implementation(libs.kotlin.coroutines.jdk8)
     implementation(libs.kotlin.coroutines.reactive)
+
+    testImplementation(libs.kotlin.coroutines.test)
 }
 
 tasks.shadowJar {
