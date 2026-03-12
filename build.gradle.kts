@@ -23,7 +23,7 @@ subprojects {
 
     tasks.withType<KotlinCompile>().configureEach {
         compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_25)
+            jvmTarget.set(JvmTarget.JVM_21)
             freeCompilerArgs.addAll(
                 "-Xjsr305=strict",
                 "-Xcontext-receivers"
@@ -32,8 +32,8 @@ subprojects {
     }
 
     tasks.withType<JavaCompile>().configureEach {
-        sourceCompatibility = "25"
-        targetCompatibility = "25"
+        sourceCompatibility = "21"
+        targetCompatibility = "21"
     }
 
     tasks.withType<Test>().configureEach {
