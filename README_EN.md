@@ -130,14 +130,14 @@ More than a framework—it's an ecosystem. Official marketplace supports plugin 
 | **Build** | Gradle (Kotlin DSL) | 9.2.1 | Multi-module builds |
 | **Game Core** | Minestom | latest | High-performance MC server library |
 | **Communication** | gRPC-Kotlin | 1.5.0 | Inter-service sync calls |
-| **Message Queue** | Kafka | 3.6+ | Async messaging |
+| **Message Queue** | Kafka | 4.1+ | Async messaging |
 | **Backend Framework** | Ktor | 3.3.3 | Admin API |
 | **Frontend Framework** | Vue 3 | 3.5+ | Admin UI |
 | **Orchestration** | Kubernetes + Agones | - | Container orchestration & game server management |
-| **Database** | PostgreSQL | 16+ | Structured data storage |
-| **Database** | MongoDB | 7+ | Document data storage |
+| **Database** | PostgreSQL | 17+ | Structured data storage |
+| **Database** | MongoDB | 8+ | Document data storage |
 | **Cache** | Redis | 7+ | Sessions, cache, leaderboards |
-| **Analytics** | ClickHouse | - | Behavior logs & analytics |
+| **Build Tool** | Rspack / Rsbuild | latest | Frontend build |
 
 ---
 
@@ -158,7 +158,7 @@ git clone https://github.com/MinecraftAzathoth/azathoth.git
 cd azathoth
 
 # 2. Start infrastructure services
-docker-compose -f deploy/docker-compose.dev.yml up -d
+docker-compose -f deploy/docker/docker-compose.yml up -d
 
 # 3. Build the project
 ./gradlew build
@@ -379,13 +379,15 @@ azathoth/
 ├── sdk/                         # Developer SDK
 │   ├── azathoth-api/            # Core API
 │   ├── azathoth-plugin-api/     # Plugin development API
-│   └── azathoth-testing/        # Testing utilities
+│   ├── azathoth-testing/        # Testing utilities
+│   └── azathoth-gradle-plugin/  # Gradle build plugin
 │
 ├── admin-frontend/              # Admin frontend (Vue 3)
 ├── client-mod/                  # Fabric client mod
 ├── website/                     # Website (Nuxt 3)
 │
 └── deploy/                      # Deployment configs
+    ├── docker/                  # Docker Compose & Dockerfiles
     ├── kubernetes/              # K8s manifests
     ├── agones/                  # Agones Fleet configs
     └── helm/                    # Helm Charts
@@ -505,27 +507,27 @@ docs(readme): update installation instructions
 ### v0.1.0 - Foundation (Current)
 - [x] Project structure setup
 - [x] Core API design
-- [ ] Gateway basic functionality
-- [ ] Game Instance basic functionality
-- [ ] Plugin system framework
+- [x] Gateway basic functionality
+- [x] Game Instance basic functionality
+- [x] Plugin system framework
 
 ### v0.2.0 - Core Gameplay
-- [ ] Combat system
-- [ ] Skill system
-- [ ] Dungeon system
+- [x] Combat system
+- [x] Skill system
+- [x] Dungeon system
 - [ ] AI behavior trees
 
 ### v0.3.0 - Social & Economy
-- [ ] Guild system
-- [ ] Trading system
-- [ ] Chat system
+- [x] Guild system
+- [x] Trading system
+- [x] Chat system
 - [ ] Mail system
 
 ### v0.4.0 - Operations Tools
-- [ ] Admin dashboard
-- [ ] Data analytics
-- [ ] Activity system
-- [ ] Client mod
+- [x] Admin dashboard
+- [x] Data analytics
+- [x] Activity system
+- [x] Client mod
 
 ### v1.0.0 - Official Release
 - [ ] Complete documentation
