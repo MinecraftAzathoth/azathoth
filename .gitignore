@@ -73,3 +73,5 @@ secrets.yaml
 
 ## Claude
 .claude/
+.narrafork/
+.worktrees/
