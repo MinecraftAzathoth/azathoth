@@ -31,8 +31,8 @@ interface PluginPackageConfig {
 /**
  * 重定位规则
  */
-interface RelocationRule {
-    val pattern: String
-    val destination: String
-    val excludes: List<String>
-}
+data class RelocationRule(
+    val pattern: String,
+    val destination: String,
+    val excludes: List<String> = emptyList()
+)

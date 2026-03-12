@@ -79,6 +79,29 @@ const pinia = createPinia()
 
 app.use(pinia)
 app.use(router)
+
+// 导航守卫：未认证时重定向到登录页
+router.beforeEach(async (to, _from, next) => {
+  if (to.name === 'Login') {
+    next()
+    return
+  }
+
+  const { useAuthStore } = await import('./stores/auth')
+  const authStore = useAuthStore()
+
+  if (authStore.isAuthenticated) {
+    next()
+  } else {
+    const ok = await authStore.checkAuth()
+    if (ok) {
+      next()
+    } else {
+      next({ name: 'Login', query: { redirect: to.fullPath } })
+    }
+  }
+})
+
 app.mount('#app')
 
 export { router }

@@ -64,6 +64,7 @@ services:
     image:
       repository: azathoth/player-service
       tag: latest
+      pullPolicy: IfNotPresent
     resources:
       limits:
         cpu: 1000m

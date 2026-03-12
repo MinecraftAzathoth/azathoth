@@ -1,3 +1,21 @@
+# Stage 1: Build
+FROM eclipse-temurin:25-jdk-alpine AS builder
+
+WORKDIR /build
+
+COPY gradle/ gradle/
+COPY gradlew settings.gradle.kts build.gradle.kts gradle.properties ./
+COPY gradle/libs.versions.toml gradle/
+
+# Cache dependencies
+RUN ./gradlew --no-daemon dependencies || true
+
+COPY core/ core/
+COPY gateway/ gateway/
+
+RUN ./gradlew --no-daemon :gateway:shadowJar -x test
+
+# Stage 2: Runtime
 FROM eclipse-temurin:25-jre-alpine
 
 LABEL maintainer="Azathoth Team"
@@ -5,23 +23,17 @@ LABEL description="Azathoth Gateway Server"
 
 WORKDIR /app
 
-# Create non-root user
 RUN addgroup -g 1000 azathoth && \
     adduser -u 1000 -G azathoth -D azathoth
 
-# Copy application
-COPY gateway/build/libs/gateway.jar app.jar
+COPY --from=builder /build/gateway/build/libs/*-all.jar app.jar
 
-# Set ownership
 RUN chown -R azathoth:azathoth /app
 
 USER azathoth
 
-# Expose ports
-EXPOSE 25565
-EXPOSE 8080
+EXPOSE 25565 9090 8080
 
-# JVM options for container environment
 ENV JAVA_OPTS="-XX:+UseContainerSupport \
     -XX:MaxRAMPercentage=75.0 \
     -XX:+UseZGC \

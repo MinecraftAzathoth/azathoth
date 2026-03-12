@@ -1,5 +1,9 @@
 package com.azathoth.sdk.api
 
+import com.azathoth.sdk.api.command.CommandManager
+import com.azathoth.sdk.api.event.EventManager
+import com.azathoth.sdk.api.permission.PermissionManager
+
 /**
  * Azathoth SDK 主入口 API
  * 
@@ -20,6 +24,16 @@ interface AzathothAPI {
      * 获取事件管理器
      */
     fun getEventManager(): EventManager
+
+    /**
+     * 获取命令管理器
+     */
+    fun getCommandManager(): CommandManager
+
+    /**
+     * 获取权限管理器
+     */
+    fun getPermissionManager(): PermissionManager
 }
 
 /**
@@ -34,11 +48,4 @@ interface PlayerManager {
  */
 interface WorldManager {
     // TODO: 世界管理相关方法
-}
-
-/**
- * 事件管理器接口
- */
-interface EventManager {
-    // TODO: 事件管理相关方法
 }

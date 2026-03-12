@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "azathoth.fullname" . }}-gateway
+  labels:
+    {{- include "azathoth.labels" . | nindent 4 }}
+    app.kubernetes.io/component: gateway
+spec:
+  type: {{ .Values.gateway.service.type }}
+  ports:
+    - name: minecraft
+      port: {{ .Values.gateway.service.port }}
+      targetPort: minecraft
+      protocol: TCP
+    - name: grpc
+      port: 9090
+      targetPort: grpc
+      protocol: TCP
+    - name: http
+      port: 8080
+      targetPort: http
+      protocol: TCP
+  selector:
+    {{- include "azathoth.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: gateway

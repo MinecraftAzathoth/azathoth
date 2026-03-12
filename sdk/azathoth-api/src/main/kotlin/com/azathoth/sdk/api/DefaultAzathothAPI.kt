@@ -22,14 +22,11 @@ class StubWorldManager : WorldManager
 
 /**
  * AzathothAPI 默认实现
- *
- * 将 EventManager、CommandManager、PermissionManager 组装在一起，
- * PlayerManager 和 WorldManager 暂时使用存根实现。
  */
 class DefaultAzathothAPI(
-    val eventManager: DefaultEventManager = DefaultEventManager(),
-    val commandManager: DefaultCommandManager = DefaultCommandManager(),
-    val permissionManager: DefaultPermissionManager = DefaultPermissionManager(),
+    private val eventManager: DefaultEventManager = DefaultEventManager(),
+    private val commandManager: DefaultCommandManager = DefaultCommandManager(),
+    private val permissionManager: DefaultPermissionManager = DefaultPermissionManager(),
     private val playerManager: PlayerManager = StubPlayerManager(),
     private val worldManager: WorldManager = StubWorldManager()
 ) : AzathothAPI {
@@ -41,9 +38,8 @@ class DefaultAzathothAPI(
     override fun getPlayerManager(): PlayerManager = playerManager
     override fun getWorldManager(): WorldManager = worldManager
     override fun getEventManager(): EventManager = eventManager
-
-    fun getCommandManager(): CommandManager = commandManager
-    fun getPermissionManager(): PermissionManager = permissionManager
+    override fun getCommandManager(): CommandManager = commandManager
+    override fun getPermissionManager(): PermissionManager = permissionManager
 
     companion object {
         @Volatile
