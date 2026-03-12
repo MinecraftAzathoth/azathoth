@@ -14,8 +14,8 @@ dependencies {
     implementation(project(":game-instance:mechanics"))
     implementation(project(":game-instance:dungeons"))
 
-    // Minestom core
-    implementation(libs.minestom)
+    // Minestom core (requires JVM 25+, comment out for JVM 21 development)
+    // implementation(libs.minestom)
 
     // gRPC for service communication
     implementation(libs.bundles.grpc)
