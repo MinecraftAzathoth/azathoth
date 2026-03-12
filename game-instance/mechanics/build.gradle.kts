@@ -13,4 +13,7 @@ dependencies {
 
     // Coroutines
     implementation(libs.kotlin.coroutines.core)
+
+    // Testing
+    testImplementation(libs.kotlin.coroutines.test)
 }

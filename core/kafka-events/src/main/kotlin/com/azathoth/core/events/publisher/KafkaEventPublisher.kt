@@ -5,7 +5,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.future.await
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.launch
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.Json
@@ -90,7 +90,9 @@ class KafkaEventPublisher(
                 record.headers().add(RecordHeader(k, v.toByteArray()))
             }
 
-            val metadata = producer.send(record).await()
+            val metadata = withContext(Dispatchers.IO) {
+                producer.send(record).get()
+            }
 
             SimplePublishResult(
                 success = true,

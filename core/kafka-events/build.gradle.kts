@@ -8,4 +8,6 @@ dependencies {
     api(project(":core:common"))
     api(libs.kafka.clients)
     api(libs.kotlin.serialization.json)
+
+    testImplementation(libs.kotlin.coroutines.test)
 }
