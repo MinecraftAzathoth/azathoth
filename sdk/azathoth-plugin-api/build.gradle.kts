@@ -9,7 +9,7 @@ dependencies {
     api(project(":sdk:azathoth-api"))
 
     // Minestom API (compileOnly - provided at runtime)
-    compileOnly(libs.minestom)
+    // compileOnly(libs.minestom) // Disabled: Minestom requires JVM 25
 
     // Kotlin Serialization
     api(libs.kotlin.serialization.json)
@@ -19,6 +19,11 @@ dependencies {
 
     // Logging
     api(libs.kotlin.logging)
+
+    // Testing
+    testImplementation(libs.junit.jupiter)
+    testImplementation(libs.kotlin.coroutines.test)
+    testImplementation(libs.mockk)
 }
 
 publishing {

@@ -10,7 +10,7 @@ dependencies {
     api(project(":sdk:azathoth-plugin-api"))
 
     // Minestom for testing
-    api(libs.minestom)
+    // api(libs.minestom) // Disabled: Minestom requires JVM 25
 
     // Testing frameworks
     api(libs.junit.jupiter)
@@ -21,6 +21,13 @@ dependencies {
     // Testcontainers
     api(libs.testcontainers)
     api(libs.testcontainers.junit)
+
+    // Logging
+    implementation(libs.kotlin.logging)
+
+    // Self-test
+    testImplementation(libs.junit.jupiter)
+    testImplementation(libs.kotlin.coroutines.test)
 }
 
 publishing {
