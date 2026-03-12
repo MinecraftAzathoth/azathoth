@@ -11,8 +11,8 @@ dependencies {
     implementation(project(":core:grpc-api"))
     implementation(project(":core:kafka-events"))
 
-    // Netty for network handling
-    implementation(libs.minestom)
+    // Netty for network handling (Minestom dependency removed - gateway uses its own network layer)
+    // implementation(libs.minestom)
 
     // gRPC for service communication
     implementation(libs.bundles.grpc)
@@ -29,6 +29,9 @@ dependencies {
     // Coroutines
     implementation(libs.kotlin.coroutines.core)
     implementation(libs.kotlin.coroutines.jdk8)
+
+    // Testing
+    testImplementation(libs.kotlin.coroutines.test)
 }
 
 tasks.shadowJar {

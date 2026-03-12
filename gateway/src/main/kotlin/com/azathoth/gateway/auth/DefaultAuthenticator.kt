@@ -52,17 +52,13 @@ class DefaultAuthenticatorChain : AuthenticatorChain {
 
     override fun removeAuthenticator(authType: AuthType) {
         authenticators.remove(authType)
-        logger.info { "移除认证器: $authType" }
     }
 
     override fun getAuthenticator(authType: AuthType): Authenticator? = authenticators[authType]
 
     override suspend fun authenticate(request: AuthRequest): Result<AuthResult> {
         val authenticator = authenticators[request.authType]
-            ?: return Result.failure(
-                ErrorCodes.UNAUTHENTICATED,
-                "不支持的认证类型: ${request.authType}"
-            )
+            ?: return Result.failure(ErrorCodes.UNAUTHENTICATED, "不支持的认证类型: ${request.authType}")
         return authenticator.authenticate(request)
     }
 }
@@ -99,24 +95,20 @@ class OfflineModeAuthenticator : Authenticator {
         )
     }
 
-    override suspend fun validateToken(token: String): Result<AuthResult> {
-        return Result.failure(ErrorCodes.TOKEN_INVALID, "离线模式不支持令牌验证")
-    }
+    override suspend fun validateToken(token: String): Result<AuthResult> =
+        Result.failure(ErrorCodes.TOKEN_INVALID, "离线模式不支持令牌验证")
 
-    override suspend fun refreshToken(refreshToken: String): Result<AuthResult> {
-        return Result.failure(ErrorCodes.TOKEN_INVALID, "离线模式不支持令牌刷新")
-    }
+    override suspend fun refreshToken(refreshToken: String): Result<AuthResult> =
+        Result.failure(ErrorCodes.TOKEN_INVALID, "离线模式不支持令牌刷新")
 
-    override suspend fun revokeToken(token: String) {
-        // 离线模式无需操作
-    }
+    override suspend fun revokeToken(token: String) { /* no-op */ }
 }
 
 // --- InMemoryLoginRateLimiter ---
 
 class InMemoryLoginRateLimiter(
     private val maxAttempts: Int = 5,
-    private val lockoutDurationMs: Long = 300_000L // 5 minutes
+    private val lockoutDurationMs: Long = 300_000L
 ) : LoginRateLimiter {
 
     private data class AttemptRecord(
@@ -128,13 +120,12 @@ class InMemoryLoginRateLimiter(
 
     override suspend fun allowAttempt(identifier: String): Boolean {
         val record = records[identifier] ?: return true
-        if (record.lockoutUntil > 0 && System.currentTimeMillis() < record.lockoutUntil) {
+        if (record.lockoutUntil > 0) {
+            if (System.currentTimeMillis() >= record.lockoutUntil) {
+                records.remove(identifier)
+                return true
+            }
             return false
-        }
-        // 锁定期过了，重置
-        if (record.lockoutUntil > 0 && System.currentTimeMillis() >= record.lockoutUntil) {
-            records.remove(identifier)
-            return true
         }
         return record.failures < maxAttempts
     }
@@ -144,7 +135,7 @@ class InMemoryLoginRateLimiter(
         record.failures++
         if (record.failures >= maxAttempts) {
             record.lockoutUntil = System.currentTimeMillis() + lockoutDurationMs
-            logger.warn { "账户已锁定: $identifier, 锁定至 ${record.lockoutUntil}" }
+            logger.warn { "账户已锁定: $identifier" }
         }
     }
 

@@ -1,13 +1,23 @@
 package com.azathoth.gateway
 
 import com.azathoth.core.common.AzathothConstants
+import com.azathoth.gateway.auth.DefaultAuthenticatorChain
+import com.azathoth.gateway.auth.InMemoryLoginRateLimiter
+import com.azathoth.gateway.auth.OfflineModeAuthenticator
+import com.azathoth.gateway.balancer.BalancingStrategy
+import com.azathoth.gateway.balancer.DefaultGatewayLoadBalancer
+import com.azathoth.gateway.balancer.DefaultHealthChecker
+import com.azathoth.gateway.routing.DefaultInstanceRegistry
+import com.azathoth.gateway.routing.DefaultRouter
+import com.azathoth.gateway.session.DefaultSessionManager
+import com.azathoth.gateway.transfer.DefaultTransferManager
 import io.github.oshai.kotlinlogging.KotlinLogging
 
 private val logger = KotlinLogging.logger {}
 
 /**
  * Azathoth Gateway 入口点
- * 
+ *
  * Gateway 负责：
  * - 玩家连接管理和认证
  * - 负载均衡和路由
@@ -15,10 +25,36 @@ private val logger = KotlinLogging.logger {}
  */
 suspend fun main(args: Array<String>) {
     logger.info { "Starting ${AzathothConstants.NAME} Gateway v${AzathothConstants.VERSION}" }
-    
-    // TODO: 初始化 Gateway 服务器
-    // TODO: 启动 gRPC 客户端连接到后端服务
-    // TODO: 启动 HTTP API
-    
+
+    // 认证子系统
+    val authenticatorChain = DefaultAuthenticatorChain().apply {
+        addAuthenticator(OfflineModeAuthenticator())
+    }
+    val rateLimiter = InMemoryLoginRateLimiter()
+    logger.info { "认证子系统已初始化 (离线模式)" }
+
+    // 会话管理
+    val sessionManager = DefaultSessionManager()
+    logger.info { "会话管理器已初始化" }
+
+    // 负载均衡
+    val loadBalancer = DefaultGatewayLoadBalancer(BalancingStrategy.ROUND_ROBIN)
+    val instanceRegistry = DefaultInstanceRegistry()
+    val healthChecker = DefaultHealthChecker(
+        instancesProvider = { instanceRegistry.getAllInstances().toList() }
+    )
+    logger.info { "负载均衡器已初始化 (策略: ${loadBalancer.strategy})" }
+
+    // 路由
+    val router = DefaultRouter(instanceRegistry, loadBalancer)
+    logger.info { "路由器已初始化" }
+
+    // 传送管理
+    val transferManager = DefaultTransferManager()
+    logger.info { "传送管理器已初始化" }
+
+    // 启动健康检查
+    healthChecker.startPeriodicCheck(30_000L)
+
     logger.info { "Gateway started on port ${AzathothConstants.DEFAULT_GATEWAY_PORT}" }
 }

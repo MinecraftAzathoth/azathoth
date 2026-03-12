@@ -8,8 +8,8 @@ dependencies {
     api(project(":core:common"))
     api(project(":core:protocol"))
 
-    // Minestom core
-    api(libs.minestom)
+    // Minestom core (requires JVM 25 runtime, enable when available)
+    // api(libs.minestom)
 
     // Coroutines
     implementation(libs.kotlin.coroutines.core)
