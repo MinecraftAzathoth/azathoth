@@ -2,7 +2,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
 }
 
-description = "Azathoth Game Instance - Game Mechanics (Combat, Skills, Items)"
+description = "Azathoth Game Instance - Game Mechanics (Combat, Skills, AI, Items)"
 
 dependencies {
     api(project(":core:common"))
