@@ -38,6 +38,8 @@ dependencies {
     implementation(libs.kotlin.coroutines.reactive)
 
     testImplementation(libs.kotlin.coroutines.test)
+    testImplementation(libs.ktor.server.test.host)
+    testImplementation(libs.kotlin.serialization.json)
 }
 
 tasks.shadowJar {

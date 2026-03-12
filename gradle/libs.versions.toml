@@ -80,6 +80,7 @@ ktor-server-websockets = { module = "io.ktor:ktor-server-websockets-jvm", versio
 ktor-server-cors = { module = "io.ktor:ktor-server-cors-jvm", version.ref = "ktor" }
 ktor-server-call-logging = { module = "io.ktor:ktor-server-call-logging-jvm", version.ref = "ktor" }
 ktor-server-status-pages = { module = "io.ktor:ktor-server-status-pages-jvm", version.ref = "ktor" }
+ktor-server-test-host = { module = "io.ktor:ktor-server-test-host-jvm", version.ref = "ktor" }
 
 # Ktor Client
 ktor-client-core = { module = "io.ktor:ktor-client-core-jvm", version.ref = "ktor" }
