@@ -39,6 +39,7 @@ include(":services:dungeon-service")
 include(":services:activity-service")
 include(":services:guild-service")
 include(":services:trade-service")
+include(":services:mail-service")
 include(":services:admin-service")
 
 // ==================== SDK ====================

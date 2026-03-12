@@ -1,0 +1,138 @@
+syntax = "proto3";
+
+package com.azathoth.grpc.mail;
+
+option java_multiple_files = true;
+option java_package = "com.azathoth.core.grpc.mail";
+
+// 邮件服务定义
+service MailService {
+  // 发送邮件
+  rpc SendMail(SendMailRequest) returns (SendMailResponse);
+
+  // 获取玩家邮件列表
+  rpc GetMailbox(GetMailboxRequest) returns (GetMailboxResponse);
+
+  // 读取邮件
+  rpc ReadMail(ReadMailRequest) returns (ReadMailResponse);
+
+  // 领取附件
+  rpc ClaimAttachments(ClaimAttachmentsRequest) returns (ClaimAttachmentsResponse);
+
+  // 删除邮件
+  rpc DeleteMail(DeleteMailRequest) returns (DeleteMailResponse);
+
+  // 批量发送系统邮件（管理后台用）
+  rpc SendSystemMail(SendSystemMailRequest) returns (SendSystemMailResponse);
+}
+
+// ─── 邮件数据 ────────────────────────────────────────────
+
+message MailData {
+  string mail_id = 1;
+  string sender_id = 2;
+  string sender_name = 3;
+  string recipient_id = 4;
+  string subject = 5;
+  string content = 6;
+  MailType type = 7;
+  repeated Attachment attachments = 8;
+  bool read = 9;
+  bool claimed = 10;
+  int64 sent_at = 11;
+  int64 expires_at = 12;
+}
+
+message Attachment {
+  string item_id = 1;
+  int32 amount = 2;
+  map<string, string> metadata = 3;
+}
+
+enum MailType {
+  MAIL_TYPE_UNSPECIFIED = 0;
+  PLAYER = 1;
+  SYSTEM = 2;
+  REWARD = 3;
+  GUILD = 4;
+  TRADE = 5;
+}
+
+// ─── 请求/响应 ───────────────────────────────────────────
+
+message SendMailRequest {
+  string sender_id = 1;
+  string sender_name = 2;
+  string recipient_id = 3;
+  string subject = 4;
+  string content = 5;
+  MailType type = 6;
+  repeated Attachment attachments = 7;
+  int64 expires_at = 8;
+}
+
+message SendMailResponse {
+  bool success = 1;
+  string mail_id = 2;
+  string error_message = 3;
+}
+
+message GetMailboxRequest {
+  string player_id = 1;
+  bool unread_only = 2;
+  int32 page = 3;
+  int32 page_size = 4;
+}
+
+message GetMailboxResponse {
+  repeated MailData mails = 1;
+  int32 total_count = 2;
+  int32 unread_count = 3;
+}
+
+message ReadMailRequest {
+  string player_id = 1;
+  string mail_id = 2;
+}
+
+message ReadMailResponse {
+  bool success = 1;
+  MailData mail = 2;
+  string error_message = 3;
+}
+
+message ClaimAttachmentsRequest {
+  string player_id = 1;
+  string mail_id = 2;
+}
+
+message ClaimAttachmentsResponse {
+  bool success = 1;
+  repeated Attachment claimed_items = 2;
+  string error_message = 3;
+}
+
+message DeleteMailRequest {
+  string player_id = 1;
+  string mail_id = 2;
+}
+
+message DeleteMailResponse {
+  bool success = 1;
+  string error_message = 2;
+}
+
+message SendSystemMailRequest {
+  string subject = 1;
+  string content = 2;
+  repeated string recipient_ids = 3;
+  repeated Attachment attachments = 4;
+  int64 expires_at = 5;
+  bool send_to_all = 6;
+}
+
+message SendSystemMailResponse {
+  bool success = 1;
+  int32 sent_count = 2;
+  string error_message = 3;
+}

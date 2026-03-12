@@ -519,7 +519,7 @@ docs(readme): update installation instructions
 - [x] Guild system
 - [x] Trading system
 - [x] Chat system
-- [ ] Mail system
+- [x] Mail system
 
 ### v0.4.0 - Operations Tools (Current)
 - [x] Admin dashboard

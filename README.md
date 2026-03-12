@@ -518,7 +518,7 @@ docs(readme): update installation instructions
 - [x] 公会系统
 - [x] 交易系统
 - [x] 聊天系统
-- [ ] 邮件系统
+- [x] 邮件系统
 
 ### v0.4.0 - 运营工具 (当前)
 - [x] 管理后台
