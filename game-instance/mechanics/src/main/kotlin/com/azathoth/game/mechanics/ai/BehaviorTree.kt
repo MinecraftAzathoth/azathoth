@@ -100,6 +100,13 @@ class CompositeBuilder(private val name: String, private val type: CompositeType
         children += Cooldown(name, child, ticks)
     }
 
+    /**
+     * 直接添加预制的行为节点实例
+     */
+    fun node(behaviorNode: BehaviorNode) {
+        children += behaviorNode
+    }
+
     fun build(): BehaviorNode = when (type) {
         CompositeType.SELECTOR -> Selector(name, children.toList())
         CompositeType.SEQUENCE -> Sequence(name, children.toList())

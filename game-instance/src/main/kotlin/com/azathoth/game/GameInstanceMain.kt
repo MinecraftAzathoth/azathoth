@@ -3,6 +3,8 @@ package com.azathoth.game
 import com.azathoth.core.common.AzathothConstants
 import com.azathoth.game.engine.tick.DefaultTickManager
 import com.azathoth.game.engine.world.DefaultWorldManager
+import com.azathoth.game.mechanics.ai.manager.DefaultAIManager
+import com.azathoth.game.mechanics.ai.mob.DefaultMobRegistry
 import com.azathoth.game.mechanics.combat.DefaultCombatSystem
 import com.azathoth.game.mechanics.skill.DefaultSkillSystem
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -29,6 +31,11 @@ suspend fun main(args: Array<String>) {
     val combatSystem = DefaultCombatSystem()
     val skillSystem = DefaultSkillSystem()
     logger.info { "游戏机制已初始化 (CombatSystem, SkillSystem)" }
+
+    // AI 系统
+    val aiManager = DefaultAIManager()
+    val mobRegistry = DefaultMobRegistry()
+    logger.info { "AI 系统已初始化 (AIManager, MobRegistry)" }
 
     // 启动 Tick 循环
     tickManager.start()
