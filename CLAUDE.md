@@ -32,7 +32,7 @@ Azathoth is an MMORPG-grade Minecraft server framework built on Minestom, design
 ## Infrastructure (Docker)
 
 ```bash
-# Start dev infrastructure (PostgreSQL, MongoDB, Redis, Kafka)
+# Start dev infrastructure (PostgreSQL, MongoDB, Redis, Kafka, ClickHouse)
 docker-compose -f deploy/docker/docker-compose.yml up -d
 
 # Stop
@@ -70,7 +70,7 @@ Players → Gateway → Game Instances → Backend Services
 
 **Core modules** (`core/`):
 - `protocol/` - MC protocol definitions
-- `common/` - Shared utilities (Configuration, Lifecycle, ServiceRegistry, Cache)
+- `common/` - Shared utilities (Configuration, Lifecycle, ServiceRegistry, Cache, Snapshot)
 - `grpc-api/` - Proto definitions for 7 services (player, gateway, chat, guild, dungeon, trade, activity)
 - `kafka-events/` - Event bus abstractions
 
@@ -101,7 +101,7 @@ Three plugin types:
 - **Language**: Kotlin 2.3.0 (coroutine-first), Java 25
 - **Game Core**: Minestom
 - **Backend**: Ktor 3.3.3
-- **Database**: PostgreSQL (Exposed ORM), MongoDB, Redis (Lettuce)
+- **Database**: PostgreSQL (Exposed ORM), MongoDB, Redis (Lettuce), ClickHouse (Snapshot/Rollback)
 - **Messaging**: gRPC-Kotlin 1.5.0, Kafka 4.1.1
 - **Orchestration**: Kubernetes + Agones
 - **Frontend**: Vue 3 + Rspack
