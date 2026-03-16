@@ -136,6 +136,7 @@ More than a framework—it's an ecosystem. Official marketplace supports plugin 
 | **Orchestration** | Kubernetes + Agones | - | Container orchestration & game server management |
 | **Database** | PostgreSQL | 17+ | Structured data storage |
 | **Database** | MongoDB | 8+ | Document data storage |
+| **Database** | ClickHouse | 24.8+ | Player snapshot & rollback time-series data |
 | **Cache** | Redis | 7+ | Sessions, cache, leaderboards |
 | **Build Tool** | Rspack / Rsbuild | latest | Frontend build |
 
@@ -290,33 +291,44 @@ class DragonLairDungeon : AbstractDungeon() {
 ### Creating an AI Behavior Tree
 
 ```kotlin
-@BehaviorTree(id = "dragon_ai")
-class DragonAI : AbstractBehaviorTree() {
-
-    override fun build(): BehaviorNode = selector {
-        // Flee when low health
-        sequence {
-            condition { entity.healthPercent < 0.2 }
-            action { flee(duration = 5.seconds) }
-            action { castSkill("heal") }
+// Build behavior trees with DSL
+val dragonAI = behaviorTree("dragon_ai") {
+    selector("root") {
+        // Flee and heal when low health
+        sequence("fleeAndHeal") {
+            node(IsHealthBelow(0.2))
+            node(Flee(speed = 0.25, safeDistance = 20.0))
+            node(Heal(amount = 50.0, cooldownTicks = 100))
         }
 
-        // Ranged attack
-        sequence {
-            condition { distanceToTarget > 10 }
-            action { castSkill("fire_breath") }
+        // Ranged attack (fire when in range)
+        sequence("rangedCombat") {
+            node(HasTarget())
+            node(IsTargetAlive())
+            node(IsTargetInRange(16.0))
+            node(RangedAttack(damage = 15.0, range = 16.0))
         }
 
         // Melee attack
-        sequence {
-            condition { distanceToTarget <= 3 }
-            action { meleeAttack() }
+        sequence("meleeCombat") {
+            node(HasTarget())
+            node(IsTargetAlive())
+            node(IsTargetInRange(3.0))
+            node(MeleeAttack(damage = 25.0, range = 3.0))
         }
 
-        // Approach target
-        action { moveTo(target.position) }
+        // Chase target
+        sequence("chase") {
+            node(FindTarget(perception, range = 24.0))
+            node(ChaseTarget(speed = 0.3, arrivalDistance = 3.0))
+        }
     }
 }
+
+// Or use prebuilt templates for quick setup
+val zombieAI = BehaviorTemplates.aggressiveMelee(perception)
+val skeletonAI = BehaviorTemplates.aggressiveRanged(perception)
+val sheepAI = BehaviorTemplates.passiveWanderer(patrolWaypoints)
 ```
 
 ### Extending Payment Channels
@@ -367,7 +379,7 @@ azathoth/
 │
 ├── game-instance/               # Game instance
 │   ├── engine/                  # Minestom extensions
-│   ├── mechanics/               # Combat, skills, AI systems
+│   ├── mechanics/               # Combat, skills, AI behavior trees, perception, threat, pathfinding
 │   └── dungeons/                # Dungeon logic
 │
 ├── services/                    # Backend microservices
@@ -377,6 +389,8 @@ azathoth/
 │   ├── activity-service/        # Activities & quests
 │   ├── guild-service/           # Guild system
 │   ├── trade-service/           # Trading system
+│   ├── mail-service/            # Mail system
+│   ├── rollback-service/        # Player data snapshot & rollback (ClickHouse)
 │   └── admin-service/           # Admin API
 │
 ├── sdk/                         # Developer SDK
@@ -513,7 +527,7 @@ docs(readme): update installation instructions
 - [x] Combat system
 - [x] Skill system
 - [x] Dungeon system
-- [ ] AI behavior trees
+- [x] AI behavior trees
 
 ### v0.3.0 - Social & Economy ✅
 - [x] Guild system
@@ -526,6 +540,7 @@ docs(readme): update installation instructions
 - [x] Data analytics
 - [x] Activity system
 - [x] Client mod
+- [x] Player data snapshot & rollback system (ClickHouse)
 
 ### v1.0.0 - Official Release
 - [ ] Complete documentation

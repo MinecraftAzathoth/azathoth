@@ -75,8 +75,9 @@ Players → Gateway → Game Instances → Backend Services
 - `kafka-events/` - Event bus abstractions
 
 **Game Instance** (`game-instance/`):
-- `engine/` - Minestom extensions
+- `engine/` - Minestom extensions (Entity, World, Tick, Player)
 - `mechanics/` - Combat, skills, AI systems
+  - `ai/` - Behavior tree framework, perception, threat table, pathfinding, prebuilt nodes, mob definitions, AI manager, behavior templates
 - `dungeons/` - Dungeon logic
 
 **SDK** (`sdk/`):

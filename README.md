@@ -291,33 +291,44 @@ class DragonLairDungeon : AbstractDungeon() {
 ### 创建 AI 行为树
 
 ```kotlin
-@BehaviorTree(id = "dragon_ai")
-class DragonAI : AbstractBehaviorTree() {
-
-    override fun build(): BehaviorNode = selector {
-        // 低血量时逃跑
-        sequence {
-            condition { entity.healthPercent < 0.2 }
-            action { flee(duration = 5.seconds) }
-            action { castSkill("heal") }
+// 使用 DSL 构建行为树
+val dragonAI = behaviorTree("dragon_ai") {
+    selector("root") {
+        // 低血量时逃跑并治疗
+        sequence("fleeAndHeal") {
+            node(IsHealthBelow(0.2))
+            node(Flee(speed = 0.25, safeDistance = 20.0))
+            node(Heal(amount = 50.0, cooldownTicks = 100))
         }
 
-        // 远程攻击
-        sequence {
-            condition { distanceToTarget > 10 }
-            action { castSkill("fire_breath") }
+        // 远程攻击（射程内直接攻击）
+        sequence("rangedCombat") {
+            node(HasTarget())
+            node(IsTargetAlive())
+            node(IsTargetInRange(16.0))
+            node(RangedAttack(damage = 15.0, range = 16.0))
         }
 
         // 近战攻击
-        sequence {
-            condition { distanceToTarget <= 3 }
-            action { meleeAttack() }
+        sequence("meleeCombat") {
+            node(HasTarget())
+            node(IsTargetAlive())
+            node(IsTargetInRange(3.0))
+            node(MeleeAttack(damage = 25.0, range = 3.0))
         }
 
-        // 接近目标
-        action { moveTo(target.position) }
+        // 追击目标
+        sequence("chase") {
+            node(FindTarget(perception, range = 24.0))
+            node(ChaseTarget(speed = 0.3, arrivalDistance = 3.0))
+        }
     }
 }
+
+// 或使用预制模板快速创建
+val zombieAI = BehaviorTemplates.aggressiveMelee(perception)
+val skeletonAI = BehaviorTemplates.aggressiveRanged(perception)
+val sheepAI = BehaviorTemplates.passiveWanderer(patrolWaypoints)
 ```
 
 ### 扩展支付渠道
@@ -367,7 +378,7 @@ azathoth/
 │
 ├── game-instance/               # 游戏实例
 │   ├── engine/                  # Minestom 扩展引擎
-│   ├── mechanics/               # 战斗、技能、AI 系统
+│   ├── mechanics/               # 战斗、技能、AI 行为树、感知、仇恨、寻路
 │   └── dungeons/                # 副本逻辑
 │
 ├── services/                    # 后端微服务
@@ -515,7 +526,7 @@ docs(readme): update installation instructions
 - [x] 战斗系统
 - [x] 技能系统
 - [x] 副本系统
-- [ ] AI 行为树
+- [x] AI 行为树
 
 ### v0.3.0 - 社交与经济 ✅
 - [x] 公会系统
