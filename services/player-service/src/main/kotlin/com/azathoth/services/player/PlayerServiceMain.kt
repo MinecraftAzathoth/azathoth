@@ -4,8 +4,11 @@ import com.azathoth.core.common.database.DatabaseConfig
 import com.azathoth.core.common.database.DatabaseFactory
 import com.azathoth.services.player.grpc.PlayerServiceGrpcImpl
 import com.azathoth.services.player.repository.*
+import com.azathoth.core.common.snapshot.InMemorySnapshotStore
 import com.azathoth.services.player.service.DefaultInventoryService
 import com.azathoth.services.player.service.DefaultPlayerService
+import com.azathoth.services.player.service.SnapshotInventoryService
+import com.azathoth.services.player.service.SnapshotPlayerService
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.grpc.ServerBuilder
 import io.ktor.server.engine.*
@@ -36,9 +39,10 @@ fun main() {
     }
 
     // 业务组件
-    val playerService = DefaultPlayerService(repository)
-    val inventoryService = DefaultInventoryService()
-    logger.info { "业务组件已初始化 (PlayerService, InventoryService)" }
+    val snapshotStore = InMemorySnapshotStore()
+    val playerService = SnapshotPlayerService(DefaultPlayerService(repository), snapshotStore)
+    val inventoryService = SnapshotInventoryService(DefaultInventoryService(), snapshotStore)
+    logger.info { "业务组件已初始化 (PlayerService, InventoryService, SnapshotStore)" }
 
     // gRPC 服务器
     val grpcPort = System.getenv("GRPC_PORT")?.toIntOrNull() ?: 9090

@@ -2,11 +2,14 @@ package com.azathoth.services.admin
 
 import com.azathoth.services.admin.api.routes.adminRoutes
 import com.azathoth.services.admin.api.routes.authRoutes
+import com.azathoth.services.admin.api.routes.rollbackProxyRoutes
 import com.azathoth.services.admin.auth.AuthService
 import com.azathoth.services.admin.moderation.DefaultModerationService
 import com.auth0.jwt.JWT
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.grpc.ServerBuilder
+import io.ktor.client.*
+import io.ktor.client.engine.cio.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
@@ -28,7 +31,8 @@ fun main() {
 
     val moderationService = DefaultModerationService()
     val authService = AuthService()
-    logger.info { "业务组件已初始化 (ModerationService, AuthService)" }
+    val rollbackClient = HttpClient(CIO)
+    logger.info { "业务组件已初始化 (ModerationService, AuthService, RollbackClient)" }
 
     val grpcPort = System.getenv("GRPC_PORT")?.toIntOrNull() ?: 9090
     val grpcServer = ServerBuilder.forPort(grpcPort).build().start()
@@ -37,7 +41,7 @@ fun main() {
     val httpPort = System.getenv("HTTP_PORT")?.toIntOrNull() ?: 8080
     val httpServer = embeddedServer(Netty, port = httpPort) {
         configurePlugins(authService)
-        configureRouting(authService)
+        configureRouting(authService, rollbackClient)
     }.start(wait = false)
     logger.info { "HTTP 服务器已启动，端口: $httpPort" }
 
@@ -47,6 +51,7 @@ fun main() {
         logger.info { "正在关闭 Admin Service..." }
         httpServer.stop(1000, 5000)
         grpcServer.shutdown()
+        rollbackClient.close()
         logger.info { "Admin Service 已关闭" }
     })
 
@@ -108,7 +113,7 @@ private fun Application.configurePlugins(authService: AuthService) {
     }
 }
 
-private fun Application.configureRouting(authService: AuthService) {
+private fun Application.configureRouting(authService: AuthService, rollbackClient: HttpClient) {
     routing {
         get("/health/live") { call.respondText("OK") }
         get("/health/ready") { call.respondText("OK") }
@@ -118,6 +123,7 @@ private fun Application.configureRouting(authService: AuthService) {
 
             authenticate("auth-jwt") {
                 adminRoutes()
+                rollbackProxyRoutes(rollbackClient)
             }
         }
     }

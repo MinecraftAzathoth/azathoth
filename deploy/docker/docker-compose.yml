@@ -87,8 +87,28 @@ services:
     depends_on:
       - kafka
 
+  # ClickHouse (Snapshot / Rollback)
+  clickhouse:
+    image: clickhouse/clickhouse-server:24.8-alpine
+    container_name: azathoth-clickhouse
+    environment:
+      CLICKHOUSE_DB: azathoth
+      CLICKHOUSE_USER: azathoth
+      CLICKHOUSE_PASSWORD: azathoth_dev
+    ports:
+      - "8123:8123"
+      - "9000:9000"
+    volumes:
+      - clickhouse_data:/var/lib/clickhouse
+    healthcheck:
+      test: ["CMD-SHELL", "clickhouse-client --query 'SELECT 1'"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
 volumes:
   postgres_data:
   mongodb_data:
   redis_data:
   kafka_data:
+  clickhouse_data:

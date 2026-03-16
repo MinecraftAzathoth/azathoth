@@ -41,6 +41,7 @@ include(":services:guild-service")
 include(":services:trade-service")
 include(":services:mail-service")
 include(":services:admin-service")
+include(":services:rollback-service")
 
 // ==================== SDK ====================
 include(":sdk:azathoth-api")

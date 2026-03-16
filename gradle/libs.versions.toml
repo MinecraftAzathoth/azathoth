@@ -29,6 +29,9 @@ mongodb = "5.3.1"
 exposed = "1.0.0-rc-4"
 hikari = "7.0.2"
 
+# ClickHouse
+clickhouse = "0.8.2"
+
 # Redis
 lettuce = "7.2.1.RELEASE"
 jedis = "7.2.0"
@@ -112,6 +115,10 @@ hikari = { module = "com.zaxxer:HikariCP", version.ref = "hikari" }
 # Redis
 lettuce = { module = "io.lettuce:lettuce-core", version.ref = "lettuce" }
 jedis = { module = "redis.clients:jedis", version.ref = "jedis" }
+
+# ClickHouse
+clickhouse-jdbc = { module = "com.clickhouse:clickhouse-jdbc", version.ref = "clickhouse" }
+testcontainers-clickhouse = { module = "org.testcontainers:clickhouse", version.ref = "testcontainers" }
 
 # Kafka
 kafka-clients = { module = "org.apache.kafka:kafka-clients", version.ref = "kafka" }
